@@ -36,3 +36,6 @@ coverage/
 *.tmp
 *.temp
 .cache/
+
+# Graphify (generated knowledge graph - add to .gitignore)
+graphify-out/
