@@ -30,8 +30,17 @@ let db = loadData();
 app.use(cors());
 app.use(express.json());
 
+// Create uploads directory
+const uploadDir = path.join(__dirname, 'uploads');
+if (!fs.existsSync(uploadDir)) {
+  fs.mkdirSync(uploadDir);
+}
+
 const upload = multer({
-  storage: multer.memoryStorage(),
+  storage: multer.diskStorage({
+    destination: (req, file, cb) => cb(null, uploadDir),
+    filename: (req, file, cb) => cb(null, Date.now() + '-' + file.originalname.replace(/[^a-zA-Z0-9.]/g, '_')),
+  }),
   limits: { fileSize: 5 * 1024 * 1024 },
   fileFilter: (req, file, cb) => {
     const ok = ['.pdf', '.txt', '.doc', '.docx'].includes(path.extname(file.originalname).toLowerCase());
@@ -48,6 +57,275 @@ const TECH_SKILLS = [
   'html','css','tailwind','bootstrap','sass','webpack','vite',
   'figma','jira','agile','scrum',
 ];
+
+// ============================================================
+// DETERMINISTIC ATS ENGINE
+// ============================================================
+
+// ============================================================
+// STEP 1: TEMPLATE PROCESSING WITH CONFIG
+// ============================================================
+function processTemplate(templateText, config = {}) {
+  const defaultConfig = {
+    use_keywords: true,
+    use_sections: true,
+    use_formatting: true,
+    enabled_sections: ['skills', 'projects', 'education', 'experience', 'summary'],
+    disabled_sections: [],
+    strictness: 'medium'
+  };
+  
+  const cfg = { ...defaultConfig, ...config };
+  
+  // Extract keywords
+  let keywords = [];
+  if (cfg.use_keywords) {
+    keywords = extractCleanKeywords(templateText);
+  }
+  
+  // Extract sections
+  let sections = [];
+  if (cfg.use_sections) {
+    sections = extractSections(templateText);
+    // Filter enabled sections
+    sections = sections.filter(s => cfg.enabled_sections.includes(s.name));
+  }
+  
+  return { keywords, sections, config: cfg };
+}
+
+function extractSections(text) {
+  const sections = [];
+  const lines = text.split('\n');
+  const patterns = {
+    'skills': /^(skills|technical skills|technologies|tools)\\s*[:;-]/gmi,
+    'projects': /^(projects?|portfolio)\\s*[:;-]/gmi,
+    'education': /^(education|academic|qualification)\\s*[:;-]/gmi,
+    'experience': /^(experience|employment|work history)\\s*[:;-]/gmi,
+    'summary': /^(summary|objective|profile|about)\\s*[:;-]/gmi,
+  };
+  
+  for (const [name, pattern] of Object.entries(patterns)) {
+    if (pattern.test(text)) {
+      sections.push({ name, present: true });
+    }
+  }
+  
+  return sections;
+}
+
+// ============================================================
+// STEP 2 & 3: TEXT NORMALIZATION & KEYWORD EXTRACTION
+// ============================================================
+function normalizeKeyword(kw) {
+  if (!kw || kw.length < 2) return null;
+  
+  let normalized = kw.toLowerCase().trim();
+  
+  // Remove noise
+  if (/^[0-9]+$/.test(normalized)) return null;
+  if (/^[a-z]{1,2}$/.test(normalized) && normalized.length < 3) return null;
+  
+  // Normalize symbols
+  normalized = normalized.replace(/[#+]/g, '').replace(/\.\./g, '.').replace(/\s+/g, '');
+  if (normalized.length < 2) return null;
+  
+  // Map to canonical forms
+  const normalizations = {
+    'c++': 'cpp', 'c#': 'csharp',
+    'node.js': 'nodejs', 'node': 'nodejs',
+    'react.js': 'reactjs', 'react': 'react',
+    'angular.js': 'angularjs', 'angular': 'angular',
+    'vue.js': 'vuejs', 'vue': 'vue',
+    'javascript': 'js', 'javascripts': 'js',
+    'typescript': 'ts', 'typescriptcript': 'ts',
+    'amazon web services': 'aws', 'amazonws': 'aws',
+    'mongodb': 'mongo', 'mongo db': 'mongo',
+    'postgresql': 'postgres', 'postgres sql': 'postgres',
+    'dockercontainer': 'docker',
+    'kubernetes': 'k8s', 'kubernet': 'k8s',
+    'awss': 'aws',
+    'html5': 'html', 'css3': 'css',
+    'tailwindcss': 'tailwind',
+    'rest api': 'restapi', 'rest-api': 'restapi',
+    'cicd': 'cicd', 'ci/cd': 'cicd',
+    'machine learning': 'ml', 'deep learning': 'dl',
+  };
+  
+  return normalizations[normalized] || normalized;
+}
+
+function extractCleanKeywords(text) {
+  if (!text) return [];
+  
+  const tokens = text.toLowerCase()
+    .split(/[,;\[\]\(\){}\/\\]+/)
+    .join(' ')
+    .split(/\s+/)
+    .map(t => t.replace(/[^a-z0-9#\+.]/g, ''))
+    .filter(t => t.length > 0);
+  
+  const keywords = new Set();
+  for (const token of tokens) {
+    const normalized = normalizeKeyword(token);
+    if (normalized && normalized.length >= 2) keywords.add(normalized);
+  }
+  
+  return [...keywords];
+}
+
+// ============================================================
+// STEP 4: SMART FUZZY MATCHING
+// ============================================================
+const SYNONYMS = {
+  'js': ['javascript'], 'ts': ['typescript'],
+  'react': ['reactjs', 'react.js'], 'node': ['nodejs', 'node.js'],
+  'angular': ['angularjs'], 'vue': ['vuejs'],
+  'aws': ['amazon web services'], 'gcp': ['google cloud'],
+  'mongo': ['mongodb'], 'postgres': ['postgresql'],
+  'python': ['py'], 'k8s': ['kubernetes'],
+  'restapi': ['rest api'], 'ml': ['machine learning'],
+  'dl': ['deep learning'], 'cpp': ['c++'], 'csharp': ['c#'],
+};
+
+function fuzzyMatch(keyword, resumeSet) {
+  // Exact match
+  if (resumeSet.has(keyword)) return true;
+  
+  // Synonym match
+  const synonyms = SYNONYMS[keyword];
+  if (synonyms) {
+    for (const syn of synonyms) {
+      if (resumeSet.has(syn)) return true;
+    }
+  }
+  
+  // Substring match (relaxed for ambiguous cases)
+  for (const kw of resumeSet) {
+    if ((kw.includes(keyword) || keyword.includes(kw))) {
+      if (kw.length >= 3 && keyword.length >= 3) return true;
+    }
+  }
+  
+  return false;
+}
+
+// ============================================================
+// STEP 5: SECTION VALIDATION
+// ============================================================
+function validateSections(userSections, templateSections, config) {
+  const issues = [];
+  
+  for (const ts of templateSections) {
+    const found = userSections.find(us => us.name === ts.name);
+    if (!found) {
+      issues.push(`[CIRCLE: missing section - ${ts.name}]`);
+    }
+  }
+  
+  // Check order
+  if (userSections.length > 1 && templateSections.length > 1) {
+    for (let i = 0; i < Math.min(userSections.length, templateSections.length); i++) {
+      if (userSections[i].name !== templateSections[i].name) {
+        issues.push(`[ARROW: misordered section - ${userSections[i].name}]`);
+        break;
+      }
+    }
+  }
+  
+  return issues;
+}
+
+// ============================================================
+// STEP 6, 7, 8: METRICS, MISSING, SCRIBBLES
+// ============================================================
+function compareResume(userText, templateText, templateConfig = {}) {
+  const tplCfg = templateConfig.config || templateConfig;
+  const tpl = processTemplate(templateText, tplCfg);
+  
+  // Extract user keywords
+  const userKeywords = extractCleanKeywords(userText);
+  const userSet = new Set(userKeywords);
+  
+  // Keyword matching
+  const matched = [];
+  const missing = [];
+  
+  if (tplCfg.use_keywords !== false) {
+    for (const tk of tpl.keywords) {
+      if (fuzzyMatch(tk, userSet)) {
+        matched.push(tk);
+      } else {
+        missing.push(tk);
+      }
+    }
+  }
+  
+  // Section validation
+  const userSections = extractSections(userText);
+  const sectionIssues = tplCfg.use_sections !== false 
+    ? validateSections(userSections, tpl.sections, tplCfg)
+    : [];
+  
+  // FAIL CONDITION: If obvious skills in resume but 0 matched → reprocess
+  const hasObviousSkills = userKeywords.some(k => 
+    ['javascript', 'python', 'java', 'react', 'node', 'aws', 'sql', 'html'].includes(k)
+  );
+  
+  if (hasObviousSkills && matched.length === 0 && tpl.keywords.length > 0) {
+    // Relaxed matching - try more forgiving comparison
+    for (const tk of tpl.keywords.slice(0, 10)) {
+      const tkPartial = tk.substring(0, 4);
+      for (const uk of userKeywords) {
+        if (uk.includes(tkPartial) || tkPartial.includes(uk.substring(0, 4))) {
+          matched.push(tk);
+          missing.splice(missing.indexOf(tk), 1);
+          break;
+        }
+      }
+    }
+  }
+  
+  // Generate scribble annotations
+  const annotations = [];
+  
+  // Missing keywords annotations
+  for (const m of missing.slice(0, 5)) {
+    annotations.push(`[ARROW: add keyword: ${m}]`);
+  }
+  
+  // Section issues
+  annotations.push(...sectionIssues);
+  
+  // Check for weak phrasing
+  const weakPhrases = userText.match(/\b(good|great|interesting|awesome|amazing)\b/gi);
+  if (weakPhrases && weakPhrases.length > 0) {
+    annotations.push(`[STRIKE: weak phrasing - "${weakPhrases[0]}"]`);
+  }
+  
+  // Formatting check
+  const hasBulletPoints = /[•\-\*]\s/.test(userText);
+  const hasNumbers = /\d+\)\s/.test(userText);
+  if (!hasBulletPoints && !hasNumbers) {
+    annotations.push(`[NOTE: formatting mismatch - add bullets]`);
+  }
+  
+  const matchPercentage = tpl.keywords.length > 0
+    ? Math.round((matched.length / tpl.keywords.length) * 100)
+    : 0;
+  
+  return {
+    metrics: {
+      total_keywords: tpl.keywords.length,
+      matched: matched.length,
+      missing: missing.length,
+      section_issues: sectionIssues.length
+    },
+    missing_keywords: missing,
+    section_issues: sectionIssues,
+    annotations
+  };
+}
 
 const RECOMMENDED_SKILLS = [
   'react','node.js','typescript','python','docker','aws','sql','git','rest api','graphql',
@@ -164,44 +442,100 @@ function buildSuggestions(missingSections, missingKeywords, matchPercentage) {
   return suggestions.slice(0, 8);
 }
 
-function compareResumeToTemplate(text, template) {
-  const lower = text.toLowerCase();
-  const matchedKeywords = template.keywords.filter(k => lower.includes(k));
-  const missingKeywords = template.keywords.filter(k => !lower.includes(k));
-  const sectionFlags = detectSections(text);
-  const missingSections = template.requiredSections.filter(label => {
+// Use DETERMINISTIC compare function
+function compareResumeToTemplate(resumeText, template) {
+  // Use deterministic engine with config
+  const config = {
+    use_keywords: true,
+    use_sections: true,
+    use_formatting: true,
+    strictness: template.strictness || 'medium'
+  };
+  
+  const result = compareResume(resumeText, template.text, config);
+  
+  // Also detect sections for backward compatibility
+  const sectionFlags = detectSections(resumeText);
+  const missingSections = template.requiredSections?.filter(label => {
     const section = SECTION_DEFINITIONS.find(s => s.label === label);
     return section ? !sectionFlags[section.key] : false;
-  });
-
-  const keywordScore = template.keywords.length > 0 ? matchedKeywords.length / template.keywords.length : 0;
-  const sectionScore = template.requiredSections.length > 0
-    ? (template.requiredSections.length - missingSections.length) / template.requiredSections.length
-    : 1;
-  const matchPercentage = Math.round((keywordScore * 0.7 + sectionScore * 0.3) * 100);
-
+  }) || [];
+  
   return {
-    matchPercentage,
-    matchedKeywords,
-    missingKeywords,
+    matchPercentage: result.metrics.total_keywords > 0 
+      ? Math.round((result.metrics.matched / result.metrics.total_keywords) * 100)
+      : 0,
+    matchedKeywords: template.keywords.filter(k => !result.missing_keywords.includes(k)),
+    missingKeywords: result.missing_keywords,
     missingSections,
-    suggestions: buildSuggestions(missingSections, missingKeywords, matchPercentage),
+    suggestions: buildSuggestions(missingSections, result.missing_keywords, result.metrics.total_keywords > 0 
+      ? Math.round((result.metrics.matched / result.metrics.total_keywords) * 100)
+      : 0),
     template: {
-      keywordCount: template.keywords.length,
+      keywordCount: result.metrics.total_keywords,
       sections: template.requiredSections,
     },
+    scribbleAnnotations: result.annotations,
   };
 }
 
-function extractText(buffer, filename) {
+function extractText(filePathOrBuffer, filename) {
   try {
-    const text = buffer.toString('utf-8');
-    const letterCount = (text.match(/[a-zA-Z]/g) || []).length;
-    if (letterCount > 50) return text;
-
-    const readable = text.replace(/[^\x20-\x7E\n\r\t]/g, ' ').replace(/\s{3,}/g, ' ').trim();
-    if (readable.length > 50) return readable;
-  } catch (e) { }
+    const ext = filename.toLowerCase().split('.').pop();
+    
+    // PDF: use pdf-parse
+    if (ext === 'pdf') {
+      try {
+        const fs = require('fs');
+        const pdfParse = require('pdf-parse');
+        
+        let dataBuffer;
+        if (typeof filePathOrBuffer === 'string' && fs.existsSync(filePathOrBuffer)) {
+          dataBuffer = fs.readFileSync(filePathOrBuffer);
+        } else if (Buffer.isBuffer(filePathOrBuffer)) {
+          dataBuffer = filePathOrBuffer;
+        } else if (filePathOrBuffer && filePathOrBuffer.data) {
+          dataBuffer = Buffer.from(filePathOrBuffer.data);
+        }
+        
+        if (dataBuffer) {
+          const data = pdfParse(dataBuffer);
+          if (data && data.text && data.text.length > 50) {
+            return data.text;
+          }
+        }
+      } catch (pdfErr) {
+        console.error('PDF parse error:', pdfErr.message);
+      }
+    }
+    
+    // Text file
+    if (ext === 'txt' || typeof filePathOrBuffer === 'string') {
+      const fs = require('fs');
+      let text;
+      if (fs.existsSync(filePathOrBuffer)) {
+        text = fs.readFileSync(filePathOrBuffer, 'utf-8');
+      } else if (typeof filePathOrBuffer === 'string') {
+        text = filePathOrBuffer;
+      }
+      const letterCount = (text.match(/[a-zA-Z]/g) || []).length;
+      if (letterCount > 50) return text;
+    }
+    
+    // Try as buffer
+    let text;
+    if (Buffer.isBuffer(filePathOrBuffer)) {
+      text = filePathOrBuffer.toString('utf-8');
+    } else if (typeof filePathOrBuffer === 'string') {
+      text = filePathOrBuffer;
+    }
+    if (!text.startsWith('%PDF-')) {
+      const letterCount = (text.match(/[a-zA-Z]/g) || []).length;
+      if (letterCount > 50) return text;
+    }
+  } catch (e) { 
+    console.error('Extract error:', e.message);
+  }
   return null;
 }
 
@@ -404,7 +738,13 @@ app.get('/institutions/:id/template', (req, res) => {
 app.post('/institutions/template', authenticateToken, upload.single('template'), (req, res) => {
   let text = null;
 
-  if (req.file && req.file.buffer) {
+  // Try file path first
+  if (req.file && req.file.path) {
+    text = extractText(req.file.path, req.file.originalname);
+  }
+  
+  // Fallback to buffer
+  if (!text && req.file && req.file.buffer) {
     text = extractText(req.file.buffer, req.file.originalname);
   }
 
@@ -469,7 +809,17 @@ app.post('/compare-resume', upload.single('resume'), (req, res) => {
   }
 
   let text = null;
-  if (req.file && req.file.buffer) {
+  let debugInfo = { step: 'start' };
+  
+  // Try file path first (disk storage)
+  if (req.file && req.file.path) {
+    debugInfo.filePath = req.file.path;
+    text = extractText(req.file.path, req.file.originalname);
+    debugInfo.extracted = text ? text.substring(0, 100) : null;
+  }
+  
+  // Fallback to buffer
+  if (!text && req.file && req.file.buffer) {
     text = extractText(req.file.buffer, req.file.originalname);
   }
 
@@ -478,16 +828,32 @@ app.post('/compare-resume', upload.single('resume'), (req, res) => {
   }
 
   if (!text || text.trim().length < 50) {
-    return res.status(400).json({ error: 'Resume text is required (PDF/DOC/TXT or raw text).' });
+    debugInfo.error = 'No text extracted';
+    debugInfo.templateHasText = template.text ? 'yes' : 'no';
+    debugInfo.templateLength = template.text?.length;
+    console.log('DEBUG compare-resume:', JSON.stringify(debugInfo, null, 2));
+    return res.status(400).json({ error: 'Resume text is required (PDF/DOC/TXT or raw text).', debug: debugInfo });
   }
 
-  const result = compareResumeToTemplate(text, {
-    text: template.text,
-    keywords: template.keywords,
-    requiredSections: template.sections,
+  // Compare using deterministic engine
+  const result = compareResume(text, template.text, { config: { strictness: 'relaxed' } });
+  
+  debugInfo.result = result;
+  console.log('DEBUG compare-result:', JSON.stringify(result, null, 2));
+  
+  return res.json({
+    matchPercentage: result.metrics.total_keywords > 0 
+      ? Math.round((result.metrics.matched / result.metrics.total_keywords) * 100)
+      : 0,
+    matchedKeywords: result.missing_keywords.length > 0 
+      ? template.keywords.filter(k => !result.missing_keywords.includes(k))
+      : template.keywords,
+    missingKeywords: result.missing_keywords,
+    scribbleAnnotations: result.annotations,
+    section_issues: result.section_issues,
+    resumeText: text.substring(0, 500), // For display
+    debug: result
   });
-
-  return res.json(result);
 });
 
 app.post('/analyze-resume', upload.single('resume'), (req, res) => {

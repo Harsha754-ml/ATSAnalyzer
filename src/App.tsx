@@ -3,8 +3,7 @@ import { motion, useMotionValue, useTransform, useSpring } from 'motion/react';
 import {
   Upload, Sparkles, AlertCircle, CheckCircle2,
   ArrowRight, Zap, FileText, Cpu, Globe,
-  Moon, Sun, Volume2, VolumeX, Eye, EyeOff, Wifi, WifiOff,
-  X, Lock, Building2, User, Mail, KeyRound, LogOut,
+  Moon, Sun, X, Lock, Building2, Mail, KeyRound,
 } from 'lucide-react';
 import { 
   compareResume, uploadAtsTemplate, AnalysisResult, TemplateStatus,
@@ -216,16 +215,12 @@ interface AuthUser {
   email: string;
 }
 
-const Header = ({ onGetStarted, currentUser, onLogout, onLoginClick }: { 
-  onGetStarted: () => void;
+const Header = ({ currentUser, onLogout, onLoginClick }: { 
   currentUser: AuthUser | null;
   onLogout: () => void;
   onLoginClick: () => void;
 }) => {
   const { isDark, toggleTheme } = useTheme();
-  const [soundOn,   setSoundOn]   = useState(true);
-  const [compact,   setCompact]   = useState(false);
-  const [liveMode,  setLiveMode]  = useState(true);
 
   return (
     <header className="fixed top-0 left-0 w-full glass-header z-50 px-6 py-3 flex justify-between items-center">
@@ -248,7 +243,7 @@ const Header = ({ onGetStarted, currentUser, onLogout, onLoginClick }: {
       {/* Controls */}
       <div className="flex items-center gap-3">
 
-        {/* 1. Dark / Light mode */}
+        {/* Dark / Light mode */}
         <div className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700">
           <Sun className="w-3.5 h-3.5 text-amber-500" />
           <Switch
@@ -262,49 +257,6 @@ const Header = ({ onGetStarted, currentUser, onLogout, onLoginClick }: {
           <Moon className="w-3.5 h-3.5 text-blue-400" />
         </div>
 
-        {/* 2. Sound on/off */}
-        <div className="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700">
-          <Switch
-            checked={soundOn}
-            onCheckedChange={setSoundOn}
-            haptic="light"
-            size="sm"
-            checkedIcon={<Volume2 className="w-2.5 h-2.5" />}
-            uncheckedIcon={<VolumeX className="w-2.5 h-2.5" />}
-          />
-          <span className="text-xs font-semibold text-slate-500 dark:text-slate-400 w-10">
-            {soundOn ? 'Sound' : 'Muted'}
-          </span>
-        </div>
-
-        {/* 3. Compact / Full view */}
-        <div className="hidden md:flex items-center gap-2 px-3 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700">
-          <Switch
-            checked={compact}
-            onCheckedChange={setCompact}
-            size="sm"
-            checkedIcon={<EyeOff className="w-2.5 h-2.5" />}
-            uncheckedIcon={<Eye className="w-2.5 h-2.5" />}
-          />
-          <span className="text-xs font-semibold text-slate-500 dark:text-slate-400 w-14">
-            {compact ? 'Compact' : 'Full view'}
-          </span>
-        </div>
-
-        {/* 4. Live mode */}
-        <div className="hidden md:flex items-center gap-2 px-3 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700">
-          <Switch
-            checked={liveMode}
-            onCheckedChange={setLiveMode}
-            size="sm"
-            checkedIcon={<Wifi className="w-2.5 h-2.5" />}
-            uncheckedIcon={<WifiOff className="w-2.5 h-2.5" />}
-          />
-          <span className="text-xs font-semibold text-slate-500 dark:text-slate-400 w-10">
-            {liveMode ? 'Live' : 'Offline'}
-          </span>
-        </div>
-
         {/* Login / User */}
         {currentUser ? (
           <div className="flex items-center gap-3">
@@ -315,16 +267,17 @@ const Header = ({ onGetStarted, currentUser, onLogout, onLoginClick }: {
               onClick={onLogout}
               className="px-4 py-2 bg-red-50 dark:bg-red-900/30 text-red-600 dark:text-red-400 rounded-lg text-sm font-semibold hover:bg-red-100 dark:hover:bg-red-900/50 transition-all flex items-center gap-2"
             >
-              <LogOut className="w-4 h-4" />
+              <Lock className="w-4 h-4" />
               <span className="hidden sm:inline">Logout</span>
             </button>
           </div>
         ) : (
           <button
             onClick={onLoginClick}
-            className="px-5 py-2 bg-slate-900 dark:bg-blue-600 text-white rounded-lg text-sm font-semibold hover:bg-blue-600 dark:hover:bg-blue-500 transition-all"
+            className="px-5 py-2 bg-slate-900 dark:bg-blue-600 text-white rounded-lg text-sm font-semibold hover:bg-blue-600 dark:hover:bg-blue-500 transition-all flex items-center gap-2"
           >
-            Login
+            <Lock className="w-4 h-4" />
+            Upload Template
           </button>
         )}
       </div>
@@ -509,7 +462,7 @@ export default function App() {
 
   useEffect(() => {
     loadInstitutions();
-    loadMyTemplate();
+    if (currentUser) loadMyTemplate();
   }, []);
 
   const loadInstitutions = async () => {
@@ -587,11 +540,10 @@ export default function App() {
     <div className="min-h-screen bg-white dark:bg-[#0d1117] transition-colors duration-300">      <ScrollProgressBar />
       <ThreeBackground />
       <Header 
-        onGetStarted={() => document.getElementById('hero')?.scrollIntoView({ behavior: 'smooth' })}
-        currentUser={currentUser}
-        onLogout={handleLogout}
-        onLoginClick={() => setShowAuthModal(true)}
-      />
+          currentUser={currentUser}
+          onLogout={handleLogout}
+          onLoginClick={() => setShowAuthModal(true)}
+        />
 
       <main>
         {/* Hero */}
@@ -758,18 +710,18 @@ export default function App() {
 
         {/* Upload */}
         <section id="upload-section" className="section-padding">
-          <div className="max-w-5xl mx-auto w-full">
+          <div className="max-w-3xl mx-auto w-full">
             <Reveal className="text-center mb-12 space-y-4">
-              <h2 className="text-4xl font-bold tracking-tight text-slate-900 dark:text-white">Admin + Student Workflow</h2>
+              <h2 className="text-4xl font-bold tracking-tight text-slate-900 dark:text-white">Compare Your Resume</h2>
               <p className="text-lg text-slate-500 dark:text-slate-400 font-light">
-                Admins upload an ATS template, students compare their resumes and get a match report.
+                Select the company you're applying to, then upload your resume to get an ATS match report.
               </p>
             </Reveal>
 
-            <div className="grid md:grid-cols-2 gap-6">
+            {currentUser && !templateStatus && (
               <div
                 className={`
-                  saas-card min-h-[360px] flex flex-col items-center justify-center p-10 text-center border-2 border-dashed
+                  saas-card min-h-[160px] flex flex-col items-center justify-center p-6 text-center border-2 border-dashed mb-4
                   ${isTemplateDragging ? 'border-blue-500 bg-blue-50 scale-[1.02]' : 'border-slate-200 hover:border-blue-400'}
                   ${templateUploading ? 'pointer-events-none opacity-50' : ''}
                 `}
@@ -783,39 +735,29 @@ export default function App() {
                 }}
               >
                 {templateUploading ? (
-                  <div className="space-y-8">
-                    <div className="relative w-20 h-20 mx-auto">
+                  <div className="space-y-4">
+                    <div className="relative w-10 h-10 mx-auto">
                       <div className="absolute inset-0 border-4 border-slate-100 rounded-full" />
                       <div className="absolute inset-0 border-4 border-blue-600 rounded-full border-t-transparent animate-spin" />
                     </div>
-                    <p className="text-sm font-bold text-blue-600 uppercase tracking-[0.3em] animate-pulse">
+                    <p className="text-sm font-bold text-blue-600 uppercase tracking-[0.2em] animate-pulse">
                       Processing Template...
                     </p>
                   </div>
                 ) : (
                   <>
-                    <div className="w-20 h-20 bg-blue-50 rounded-3xl flex items-center justify-center text-blue-600 mb-6">
-                      <Upload className="w-10 h-10" />
-                    </div>
-                    <h3 className="text-xl font-bold mb-2 tracking-tight text-slate-900 dark:text-white uppercase">
-                      Institution: Upload Template
+                    <Upload className="w-7 h-7 text-blue-600 mb-2" />
+                    <h3 className="text-base font-bold mb-1 text-slate-900 dark:text-white">
+                      Upload Your ATS Template
                     </h3>
-                    <p className="text-slate-400 dark:text-slate-500 mb-4 font-light">
-                      {currentUser ? 'Upload your ATS template. Students will compare against this.' : 'Login to upload your institution\'s ATS template.'}
+                    <p className="text-sm text-slate-400 dark:text-slate-500 mb-2">
+                      Upload your company's ATS template
                     </p>
-                    {!currentUser && (
-                      <button
-                        onClick={() => setShowAuthModal(true)}
-                        className="btn-secondary w-full mb-4"
-                      >
-                        Login to Upload
-                      </button>
-                    )}
                     <button
                       onClick={() => templateInputRef.current?.click()}
-                      className="btn-primary w-full"
+                      className="btn-secondary text-sm px-4 py-2"
                     >
-                      Upload Template
+                      Choose File
                     </button>
                     <input
                       type="file"
@@ -826,86 +768,16 @@ export default function App() {
                   </>
                 )}
               </div>
-
-              <div
-                className={`
-                  saas-card min-h-[360px] flex flex-col items-center justify-center p-10 text-center border-2 border-dashed
-                  ${isResumeDragging ? 'border-blue-500 bg-blue-50 scale-[1.02]' : 'border-slate-200 hover:border-blue-400'}
-                  ${analyzing ? 'pointer-events-none opacity-50' : ''}
-                `}
-                onDragOver={(e) => { e.preventDefault(); setIsResumeDragging(true); }}
-                onDragLeave={() => setIsResumeDragging(false)}
-                onDrop={(e) => {
-                  e.preventDefault();
-                  setIsResumeDragging(false);
-                  const file = e.dataTransfer.files[0];
-                  if (file) handleResumeUpload(file);
-                }}
-              >
-                {analyzing ? (
-                  <div className="space-y-8">
-                    <div className="relative w-20 h-20 mx-auto">
-                      <div className="absolute inset-0 border-4 border-slate-100 rounded-full" />
-                      <div className="absolute inset-0 border-4 border-blue-600 rounded-full border-t-transparent animate-spin" />
-                    </div>
-                    <p className="text-sm font-bold text-blue-600 uppercase tracking-[0.3em] animate-pulse">
-                      Comparing Resume...
-                    </p>
-                  </div>
-                ) : (
-                  <>
-                    <div className="w-20 h-20 bg-blue-50 rounded-3xl flex items-center justify-center text-blue-600 mb-6">
-                      <Upload className="w-10 h-10" />
-                    </div>
-                    <h3 className="text-xl font-bold mb-2 tracking-tight text-slate-900 dark:text-white uppercase">
-                      Student: Upload Resume
-                    </h3>
-                    <p className="text-slate-400 dark:text-slate-500 mb-4 font-light">
-                      Select the company/institution you're applying to, then upload your resume.
-                    </p>
-                    <select
-                      value={selectedInstitution}
-                      onChange={(e) => setSelectedInstitution(e.target.value)}
-                      className="w-full mb-4 px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500 outline-none"
-                    >
-                      <option value="">Select Institution...</option>
-                      {institutions.filter(i => i.hasTemplate).map(inst => (
-                        <option key={inst.id} value={inst.id}>{inst.name}</option>
-                      ))}
-                    </select>
-                    <button
-                      onClick={() => resumeInputRef.current?.click()}
-                      disabled={!selectedInstitution}
-                      className="btn-primary w-full disabled:opacity-50 disabled:cursor-not-allowed"
-                    >
-                      Compare Resume
-                    </button>
-                    <input
-                      type="file"
-                      className="hidden"
-                      ref={resumeInputRef}
-                      onChange={(e) => e.target.files?.[0] && handleResumeUpload(e.target.files[0])}
-                    />
-                  </>
-                )}
-              </div>
-            </div>
+            )}
 
             {templateStatus && (
               <motion.div
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="mt-6 p-5 bg-green-50 border border-green-100 rounded-2xl flex flex-wrap items-center gap-4 text-green-700 text-sm font-medium"
+                className="mb-4 p-3 bg-green-50 border border-green-100 rounded-xl flex items-center gap-2 text-green-700 text-sm font-medium"
               >
-                <CheckCircle2 className="w-5 h-5 shrink-0" />
-                Template loaded with {templateStatus.keywordCount} keywords.
-                {templateStatus.sections?.length ? (
-                  <span className="text-green-700">
-                    Sections: {templateStatus.sections.join(', ')}.
-                  </span>
-                ) : (
-                  <span className="text-green-700">No required sections detected.</span>
-                )}
+                <CheckCircle2 className="w-4 h-4 shrink-0" />
+                Template loaded ({templateStatus.keywordCount} keywords)
               </motion.div>
             )}
 
@@ -913,12 +785,76 @@ export default function App() {
               <motion.div
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="mt-4 p-5 bg-red-50 border border-red-100 rounded-2xl flex items-center gap-4 text-red-600 text-sm font-medium"
+                className="mb-4 p-3 bg-red-50 border border-red-100 rounded-xl flex items-center gap-2 text-red-600 text-sm font-medium"
               >
-                <AlertCircle className="w-5 h-5 shrink-0" />
+                <AlertCircle className="w-4 h-4 shrink-0" />
                 {templateError}
               </motion.div>
             )}
+
+            <div
+              className={`
+                saas-card min-h-[360px] flex flex-col items-center justify-center p-10 text-center border-2 border-dashed
+                ${isResumeDragging ? 'border-blue-500 bg-blue-50 scale-[1.02]' : 'border-slate-200 hover:border-blue-400'}
+                ${analyzing ? 'pointer-events-none opacity-50' : ''}
+              `}
+              onDragOver={(e) => { e.preventDefault(); setIsResumeDragging(true); }}
+              onDragLeave={() => setIsResumeDragging(false)}
+              onDrop={(e) => {
+                e.preventDefault();
+                setIsResumeDragging(false);
+                const file = e.dataTransfer.files[0];
+                if (file) handleResumeUpload(file);
+              }}
+            >
+              {analyzing ? (
+                <div className="space-y-8">
+                  <div className="relative w-20 h-20 mx-auto">
+                    <div className="absolute inset-0 border-4 border-slate-100 rounded-full" />
+                    <div className="absolute inset-0 border-4 border-blue-600 rounded-full border-t-transparent animate-spin" />
+                  </div>
+                  <p className="text-sm font-bold text-blue-600 uppercase tracking-[0.3em] animate-pulse">
+                    Comparing Resume...
+                  </p>
+                </div>
+              ) : (
+                <>
+                  <div className="w-20 h-20 bg-blue-50 rounded-3xl flex items-center justify-center text-blue-600 mb-6">
+                    <Upload className="w-10 h-10" />
+                  </div>
+                  <h3 className="text-xl font-bold mb-2 tracking-tight text-slate-900 dark:text-white uppercase">
+                    Upload Your Resume
+                  </h3>
+                  <p className="text-slate-400 dark:text-slate-500 mb-4 font-light">
+                    Select the company/institution you're applying to, then upload your resume.
+                  </p>
+                  <select
+                    value={selectedInstitution}
+                    onChange={(e) => setSelectedInstitution(e.target.value)}
+                    className="w-full mb-4 px-4 py-3 rounded-xl border-2 border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:border-blue-500 focus:ring-0 outline-none transition-colors cursor-pointer appearance-none"
+                    style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%236b7280'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E")`, backgroundRepeat: 'no-repeat', backgroundPosition: 'right 12px center', backgroundSize: '20px' }}
+                  >
+                    <option value="" disabled>Select Institution...</option>
+                    {institutions.filter(i => i.hasTemplate).map(inst => (
+                      <option key={inst.id} value={inst.id}>{inst.name}</option>
+                    ))}
+                  </select>
+                  <button
+                    onClick={() => resumeInputRef.current?.click()}
+                    disabled={!selectedInstitution}
+                    className="btn-primary w-full disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    Compare Resume
+                  </button>
+                  <input
+                    type="file"
+                    className="hidden"
+                    ref={resumeInputRef}
+                    onChange={(e) => e.target.files?.[0] && handleResumeUpload(e.target.files[0])}
+                  />
+                </>
+              )}
+            </div>
 
             {resumeError && (
               <motion.div

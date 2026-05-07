@@ -315,12 +315,24 @@ const analyzeResume = (rawText) => {
   const summaryMatch = text.match(/(?:summary|objective|profile)[:\s\n]+([^\n]{30,300})/i);
   if (summaryMatch) portfolioData.summary = summaryMatch[1].trim();
 
+  // Parse resume sections with content
+  const resumeSections = [
+    { name: 'Contact', content: `${portfolioData.name} ${portfolioData.email} ${portfolioData.phone}`, matchScore: sections.hasContact ? 100 : 0 },
+    { name: 'Summary', content: portfolioData.summary, matchScore: sections.hasSummary ? 100 : 0 },
+    { name: 'Education', content: portfolioData.education.map(e => e.degree + ' ' + e.school).join(', '), matchScore: sections.hasEducation ? 100 : 0 },
+    { name: 'Experience', content: portfolioData.experience.map(e => e.title + ' at ' + e.company).join(', '), matchScore: sections.hasExperience ? 100 : 0 },
+    { name: 'Skills', content: portfolioData.skills.join(', '), matchScore: sections.hasSkills ? 100 : 0 },
+    { name: 'Projects', content: portfolioData.projects.map(p => p.name).join(', '), matchScore: sections.hasProjects ? 100 : 0 },
+  ].filter(s => s.content);
+
   return {
     score,
     suggestions,
     sections,
     keywords: { found: foundKeywords, missing: missingKeywords },
     portfolioData,
+    resumeText: text,
+    resumeSections,
   };
 };
 

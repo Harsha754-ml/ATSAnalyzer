@@ -11,6 +11,7 @@ import {
   Target,
   TrendingUp,
   Sparkles,
+  Eye,
 } from 'lucide-react';
 import type { AnalysisResult } from '../services/geminiService';
 import ThreeBackground from './ThreeBackground';
@@ -264,6 +265,89 @@ export default function AnalysisView({ results, onBack }: Props) {
               </motion.div>
             ))}
           </div>
+        </motion.section>
+
+        <motion.section
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.25 }}
+        >
+<div className="flex items-center gap-2 mb-4">
+            <Eye className="w-5 h-5 text-blue-600" />
+            <h2 className="text-lg font-bold text-slate-900 dark:text-white">Resume Scribbles</h2>
+          </div>
+          
+          {/* Handle string annotations from new backend */}
+          {(results as any).annotations?.length > 0 ? (
+            <div className="space-y-3">
+              {(results as any).annotations.map((ann: string, i: number) => (
+                <motion.div
+                  key={i}
+                  initial={{ opacity: 0, x: -10 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: 0.2 + i * 0.05 }}
+                  className={`p-4 rounded-xl border-2 transition-all ${
+                    ann.includes('[MISSING]') || ann.includes('[ARROW]') || ann.includes('[STRIKE]')
+                      ? 'bg-red-50 dark:bg-red-900/10 border-red-300 dark:border-red-700' 
+                      : 'bg-amber-50 dark:bg-amber-900/10 border-amber-300 dark:border-amber-700'
+                  }`}
+                >
+                  <p className="font-mono text-sm font-bold text-red-600 dark:text-red-400">
+                    {ann}
+                  </p>
+                </motion.div>
+              ))}
+            </div>
+          ) : (results as any).scribbleAnnotations?.length > 0 ? (
+            <div className="space-y-3">
+              {(results as any).scribbleAnnotations.map((ann: any, i: number) => (
+                <motion.div
+                  key={i}
+                  initial={{ opacity: 0, x: -10 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: 0.3 + i * 0.05 }}
+                  className={`p-4 rounded-xl border-2 transition-all ${
+                    ann.type === 'missing_keyword' 
+                      ? 'bg-red-50 dark:bg-red-900/10 border-red-300 dark:border-red-700' 
+                      : 'bg-amber-50 dark:bg-amber-900/10 border-amber-300 dark:border-amber-700'
+                  }`}
+                >
+                  <div className="flex items-center justify-between mb-2">
+                    <div className="flex items-center gap-2">
+                      <span className={`font-bold text-sm ${ann.type === 'missing_keyword' ? 'text-red-600' : 'text-amber-600'}`}>{ann.mark}</span>
+                      <span className="px-2 py-1 bg-white dark:bg-slate-800 rounded-lg text-xs font-bold text-slate-600 dark:text-slate-300">
+                        {ann.type === 'missing_keyword' ? `Missing: ${ann.keyword}` : ann.section}
+                      </span>
+                    </div>
+                  </div>
+                  <p className="text-sm text-slate-600 dark:text-slate-300">
+                    {ann.type === 'missing_keyword' 
+                      ? `Found in resume but not matching template: "${ann.keyword}"`
+                      : `${ann.section} section needs improvement`}
+                  </p>
+                </motion.div>
+              ))}
+            </div>
+          ) : results.resumeText ? (
+            <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-4">
+              <div className="flex items-center justify-between mb-3 pb-3 border-b border-slate-100 dark:border-slate-800">
+                <div className="flex items-center gap-2">
+                  <FileText className="w-5 h-5 text-blue-600" />
+                  <span className="font-bold text-slate-900 dark:text-white">Full Resume</span>
+                </div>
+                <span className="text-green-600 font-bold">{score}% Match</span>
+              </div>
+              <div className="text-sm text-slate-600 dark:text-slate-300 whitespace-pre-wrap line-clamp-8 max-h-48 overflow-y-auto">
+                {results.resumeText}
+              </div>
+            </div>
+          ) : (
+            <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-6">
+              <p className="text-slate-500 dark:text-slate-400 text-sm">
+                Upload a resume to see scribble analysis.
+              </p>
+            </div>
+)}
         </motion.section>
       </div>
 

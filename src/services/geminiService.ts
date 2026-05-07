@@ -28,6 +28,12 @@ export interface AnalysisResult {
     keywordCount: number;
     sections: string[];
   };
+  resumeText?: string;
+  resumeSections?: {
+    name: string;
+    content: string;
+    matchScore: number;
+  }[];
 }
 
 export interface TemplateStatus {
