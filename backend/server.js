@@ -58,29 +58,76 @@ const TECH_SKILLS = [
   'figma','jira','agile','scrum',
 ];
 
+const SYSTEM_TEMPLATE_TEXT = `
+Summary:
+Skills: javascript typescript python java react node.js express docker kubernetes aws azure gcp mongodb postgresql mysql redis html css tailwind git github rest api graphql
+Projects:
+Experience:
+Education:
+`;
+
 // ============================================================
 // DETERMINISTIC ATS ENGINE
 // ============================================================
 
-// ============================================================
-// STEP 1: TEMPLATE PROCESSING WITH CONFIG
-// ============================================================
-function processTemplate(templateText, config = {}) {
-  const defaultConfig = {
+function parseTemplateConfig(rawConfig = {}) {
+  const defaults = {
     use_keywords: true,
     use_sections: true,
     use_formatting: true,
     enabled_sections: ['skills', 'projects', 'education', 'experience', 'summary'],
     disabled_sections: [],
-    strictness: 'medium'
+    strictness: 'medium',
   };
-  
-  const cfg = { ...defaultConfig, ...config };
+
+  let parsed = rawConfig;
+  if (typeof rawConfig === 'string' && rawConfig.trim()) {
+    try {
+      parsed = JSON.parse(rawConfig);
+    } catch {
+      parsed = {};
+    }
+  }
+
+  if (!parsed || typeof parsed !== 'object') {
+    return defaults;
+  }
+
+  const enabled_sections = Array.isArray(parsed.enabled_sections)
+    ? parsed.enabled_sections.map((s) => String(s).toLowerCase())
+    : defaults.enabled_sections;
+  const disabled_sections = Array.isArray(parsed.disabled_sections)
+    ? parsed.disabled_sections.map((s) => String(s).toLowerCase())
+    : defaults.disabled_sections;
+  const strictness = ['low', 'medium', 'high'].includes(String(parsed.strictness).toLowerCase())
+    ? String(parsed.strictness).toLowerCase()
+    : defaults.strictness;
+
+  return {
+    use_keywords: parsed.use_keywords !== false,
+    use_sections: parsed.use_sections !== false,
+    use_formatting: parsed.use_formatting !== false,
+    enabled_sections,
+    disabled_sections,
+    strictness,
+  };
+}
+
+// ============================================================
+// STEP 1: TEMPLATE PROCESSING WITH CONFIG
+// ============================================================
+function processTemplate(templateText, config = {}) {
+  const cfg = parseTemplateConfig(config);
   
   // Extract keywords
   let keywords = [];
   if (cfg.use_keywords) {
-    keywords = extractCleanKeywords(templateText);
+    const extracted = extractCleanKeywords(templateText);
+    const techFromTemplate = TECH_SKILLS
+      .filter((skill) => templateText.toLowerCase().includes(skill))
+      .map((skill) => normalizeKeyword(skill))
+      .filter(Boolean);
+    keywords = sanitizeTemplateKeywords([...techFromTemplate, ...extracted]);
   }
   
   // Extract sections
@@ -88,7 +135,7 @@ function processTemplate(templateText, config = {}) {
   if (cfg.use_sections) {
     sections = extractSections(templateText);
     // Filter enabled sections
-    sections = sections.filter(s => cfg.enabled_sections.includes(s.name));
+    sections = sections.filter((s) => cfg.enabled_sections.includes(s.name) && !cfg.disabled_sections.includes(s.name));
   }
   
   return { keywords, sections, config: cfg };
@@ -137,14 +184,14 @@ function normalizeKeyword(kw) {
     'react.js': 'reactjs', 'react': 'react',
     'angular.js': 'angularjs', 'angular': 'angular',
     'vue.js': 'vuejs', 'vue': 'vue',
-    'javascript': 'js', 'javascripts': 'js',
-    'typescript': 'ts', 'typescriptcript': 'ts',
-    'amazon web services': 'aws', 'amazonws': 'aws',
+    'js': 'javascript', 'javascript': 'javascript', 'javascripts': 'javascript',
+    'ts': 'typescript', 'typescript': 'typescript', 'typescriptcript': 'typescript',
+    'aws': 'amazonwebservices', 'amazon web services': 'amazonwebservices', 'amazonws': 'amazonwebservices',
     'mongodb': 'mongo', 'mongo db': 'mongo',
     'postgresql': 'postgres', 'postgres sql': 'postgres',
     'dockercontainer': 'docker',
     'kubernetes': 'k8s', 'kubernet': 'k8s',
-    'awss': 'aws',
+    'awss': 'amazonwebservices',
     'html5': 'html', 'css3': 'css',
     'tailwindcss': 'tailwind',
     'rest api': 'restapi', 'rest-api': 'restapi',
@@ -198,19 +245,92 @@ function extractCleanKeywords(text) {
   return [...keywords].slice(0, 150);
 }
 
+function sanitizeTemplateKeywords(keywords) {
+  const GENERIC_NON_SKILL_WORDS = new Set([
+    'experience', 'development', 'proficient', 'strong', 'ability', 'responsible', 'managed',
+    'management', 'team', 'student', 'students', 'college', 'university', 'campus', 'reporting',
+    'location', 'uploads', 'issue', 'issues', 'track', 'assign', 'resolve', 'dedicated', 'deliver',
+    'driven', 'highquality', 'quality', 'precision', 'modern', 'curiosity', 'foundation', 'custom',
+    'interface', 'category', 'while', 'submit', 'english'
+  ]);
+
+  const PDF_GARBAGE = /^(obj|endobj|stream|endstream|xref|trailer|startxref|adobe|filter|length|decode|type|catalog|pages|media|resources)$/i;
+  const EMAIL_OR_URL = /(@|https?:\/\/|www\.)/i;
+  const LONG_NUMERIC = /\d{5,}/;
+  const PERSON_LIKE = /^[a-z]{3,}(?:[._-][a-z0-9]+)?$/i;
+
+  const normalizedTech = new Set(
+    TECH_SKILLS
+      .map((skill) => normalizeKeyword(skill))
+      .filter(Boolean)
+  );
+
+  const filtered = [];
+  for (const kw of keywords) {
+    if (!kw) continue;
+    if (EMAIL_OR_URL.test(kw)) continue;
+    if (PDF_GARBAGE.test(kw)) continue;
+    if (/^\d+$/.test(kw) || LONG_NUMERIC.test(kw)) continue;
+    if (GENERIC_NON_SKILL_WORDS.has(kw)) continue;
+    if (kw.length < 3) continue;
+
+    // Keep clear technical terms.
+    if (normalizedTech.has(kw)) {
+      filtered.push(kw);
+      continue;
+    }
+
+    // Keep plausible custom technical terms, drop person-like plain words.
+    if (PERSON_LIKE.test(kw) && kw.length <= 5) continue;
+    if (/(api|sdk|sql|nosql|devops|frontend|backend|fullstack|microservice|cloud|docker|kubernetes|react|node|python|java|typescript|javascript|graphql|mongo|postgres|redis|fastapi|flask|django)/i.test(kw)) {
+      filtered.push(kw);
+    }
+  }
+
+  return [...new Set(filtered)].slice(0, 80);
+}
+
 // ============================================================
 // STEP 4: SMART FUZZY MATCHING
 // ============================================================
 const SYNONYMS = {
-  'js': ['javascript'], 'ts': ['typescript'],
-  'react': ['reactjs', 'react.js'], 'node': ['nodejs', 'node.js'],
+  'javascript': ['js'], 'typescript': ['ts'],
+  'react': ['reactjs', 'react.js'], 'nodejs': ['node', 'node.js'],
   'angular': ['angularjs'], 'vue': ['vuejs'],
-  'aws': ['amazon web services'], 'gcp': ['google cloud'],
+  'amazonwebservices': ['aws', 'amazon web services'], 'gcp': ['google cloud'],
   'mongo': ['mongodb'], 'postgres': ['postgresql'],
   'python': ['py'], 'k8s': ['kubernetes'],
   'restapi': ['rest api'], 'ml': ['machine learning'],
   'dl': ['deep learning'], 'cpp': ['c++'], 'csharp': ['c#'],
 };
+
+function levenshteinDistance(a, b) {
+  const m = a.length;
+  const n = b.length;
+  const dp = Array.from({ length: m + 1 }, () => new Array(n + 1).fill(0));
+  for (let i = 0; i <= m; i++) dp[i][0] = i;
+  for (let j = 0; j <= n; j++) dp[0][j] = j;
+  for (let i = 1; i <= m; i++) {
+    for (let j = 1; j <= n; j++) {
+      const cost = a[i - 1] === b[j - 1] ? 0 : 1;
+      dp[i][j] = Math.min(
+        dp[i - 1][j] + 1,
+        dp[i][j - 1] + 1,
+        dp[i - 1][j - 1] + cost
+      );
+    }
+  }
+  return dp[m][n];
+}
+
+function similarity(a, b) {
+  const left = normalizeKeyword(a) || String(a).toLowerCase();
+  const right = normalizeKeyword(b) || String(b).toLowerCase();
+  if (!left || !right) return 0;
+  if (left === right) return 1;
+  const dist = levenshteinDistance(left, right);
+  return 1 - (dist / Math.max(left.length, right.length));
+}
 
 function fuzzyMatch(keyword, resumeSet) {
   // Exact match
@@ -224,11 +344,14 @@ function fuzzyMatch(keyword, resumeSet) {
     }
   }
   
-  // Substring match (relaxed for ambiguous cases)
+  // Fuzzy match (>= 80% similarity)
   for (const kw of resumeSet) {
-    if ((kw.includes(keyword) || keyword.includes(kw))) {
-      if (kw.length >= 3 && keyword.length >= 3) return true;
-    }
+    if (similarity(keyword, kw) >= 0.8) return true;
+  }
+
+  // Substring fallback
+  for (const kw of resumeSet) {
+    if (kw.length >= 4 && keyword.length >= 4 && (kw.includes(keyword) || keyword.includes(kw))) return true;
   }
   
   return false;
@@ -239,20 +362,27 @@ function fuzzyMatch(keyword, resumeSet) {
 // ============================================================
 function validateSections(userSections, templateSections, config) {
   const issues = [];
+  const userNames = userSections.map((s) => s.name);
+  const templateNames = templateSections.map((s) => s.name);
   
-  for (const ts of templateSections) {
-    const found = userSections.find(us => us.name === ts.name);
-    if (!found) {
-      issues.push(`[CIRCLE: missing section - ${ts.name}]`);
+  for (const ts of templateNames) {
+    if (!userNames.includes(ts)) {
+      issues.push(`[CIRCLE: missing section - ${ts}]`);
     }
   }
-  
-  // Check order
-  if (userSections.length > 1 && templateSections.length > 1) {
-    for (let i = 0; i < Math.min(userSections.length, templateSections.length); i++) {
-      if (userSections[i].name !== templateSections[i].name) {
-        issues.push(`[ARROW: misordered section - ${userSections[i].name}]`);
-        break;
+
+  for (const us of userNames) {
+    if (!templateNames.includes(us)) {
+      issues.push(`[NOTE: extra section - ${us}]`);
+    }
+  }
+
+  const commonTemplateOrder = templateNames.filter((s) => userNames.includes(s));
+  const commonUserOrder = userNames.filter((s) => templateNames.includes(s));
+  if (commonTemplateOrder.length > 1 && commonUserOrder.length > 1) {
+    for (let i = 0; i < Math.min(commonTemplateOrder.length, commonUserOrder.length); i++) {
+      if (commonTemplateOrder[i] !== commonUserOrder[i]) {
+        issues.push(`[ARROW: misordered section - ${commonUserOrder[i]}]`);
       }
     }
   }
@@ -264,11 +394,11 @@ function validateSections(userSections, templateSections, config) {
 // STEP 6, 7, 8: METRICS, MISSING, SCRIBBLES
 // ============================================================
 function compareResume(userText, templateText, templateConfig = {}) {
-  const tplCfg = templateConfig.config || templateConfig;
+  const tplCfg = parseTemplateConfig(templateConfig.config || templateConfig);
   const tpl = processTemplate(templateText, tplCfg);
   
   // Extract user keywords
-  const userKeywords = extractCleanKeywords(userText);
+  const userKeywords = sanitizeTemplateKeywords(extractCleanKeywords(userText));
   const userSet = new Set(userKeywords);
   
   // Keyword matching
@@ -292,8 +422,8 @@ function compareResume(userText, templateText, templateConfig = {}) {
     : [];
   
   // FAIL CONDITION: If obvious skills in resume but 0 matched → reprocess
-  const hasObviousSkills = userKeywords.some(k => 
-    ['javascript', 'python', 'java', 'react', 'node', 'aws', 'sql', 'html'].includes(k)
+  const hasObviousSkills = userKeywords.some(k =>
+    ['javascript', 'python', 'java', 'react', 'nodejs', 'amazonwebservices', 'sql', 'html'].includes(k)
   );
   
   if (hasObviousSkills && matched.length === 0 && tpl.keywords.length > 0) {
@@ -382,6 +512,8 @@ const STOPWORDS = new Set([
   'a','an','to','of','in','on','at','by','as','is','it','or','be','if','we','our','their','they','them','he','she',
   'about','over','under','into','within','across','per','each','other','more','most','less','least','may','might',
   'resume','cv','curriculum','vitae','profile','objective','summary','experience','education','skills','projects',
+  'college','school','campus','student','students','name','email','phone','location','address','state','board',
+  'strong','proficient','hands','expert','driven','ability','foundation','management','reporting','dedicated',
 ]);
 
 const SECTION_DEFINITIONS = [
@@ -401,9 +533,26 @@ function detectSections(text) {
   }, {});
 }
 
+function isLikelyTechnicalKeyword(token) {
+  if (!token || token.length < 3) return false;
+  if (/@|https?:\/\/|www\./i.test(token)) return false;
+  if (/^\d+(\.\d+)?$/.test(token)) return false;
+
+  if (/[+#.]/.test(token)) return true;
+  if (/\d/.test(token) && /[a-z]/i.test(token)) return true;
+
+  return /(api|sdk|sql|nosql|devops|frontend|backend|fullstack|microservice|cloud|docker|kubernetes|react|node|python|java|typescript|javascript|graphql|mongo|postgres|redis|flask|django|fastapi|linux|git|github|aws|azure|gcp|ci|cd|tailwind|bootstrap|vite|webpack|html|css)/i.test(token);
+}
+
 function extractKeywords(text) {
   const lower = text.toLowerCase();
-  const skills = TECH_SKILLS.filter(s => lower.includes(s));
+  const skills = Array.from(new Set(
+    TECH_SKILLS
+      .filter((s) => lower.includes(s))
+      .map((s) => normalizeKeyword(s))
+      .filter(Boolean)
+  ));
+
   const tokens = lower
     .replace(/[^a-z0-9+.#\s]/g, ' ')
     .split(/\s+/)
@@ -417,22 +566,27 @@ function extractKeywords(text) {
 
   const customKeywords = [...counts.entries()]
     .sort((a, b) => b[1] - a[1])
-    .map(([token]) => token)
-    .filter(token => !skills.includes(token))
+    .filter(([, count]) => count >= 2)
+    .map(([token]) => normalizeKeyword(token))
+    .filter(Boolean)
+    .filter(token => !skills.includes(token) && isLikelyTechnicalKeyword(token))
     .slice(0, 18);
 
-  const keywords = Array.from(new Set([...skills, ...customKeywords]));
+  const keywords = sanitizeTemplateKeywords([...skills, ...customKeywords]);
   return { keywords, skills };
 }
 
-function buildTemplate(text) {
-  const { keywords } = extractKeywords(text);
-  const sections = detectSections(text);
-  const requiredSections = SECTION_DEFINITIONS
-    .filter(s => sections[s.key])
-    .map(s => s.label);
+function buildTemplate(text, config = {}) {
+  const processed = processTemplate(text, config);
+  const requiredSections = processed.sections
+    .map((s) => SECTION_DEFINITIONS.find((d) => d.key === s.name)?.label || s.name);
 
-  return { text, keywords, requiredSections };
+  return {
+    text,
+    keywords: processed.keywords,
+    requiredSections,
+    config: processed.config,
+  };
 }
 
 function buildSuggestions(missingSections, missingKeywords, matchPercentage) {
@@ -468,6 +622,7 @@ function buildSuggestions(missingSections, missingKeywords, matchPercentage) {
 
 // Use DETERMINISTIC compare function
 function compareResumeToTemplate(resumeText, template) {
+  const requiredSections = template.requiredSections || template.sections || [];
   // Use deterministic engine with config
   const config = {
     use_keywords: true,
@@ -480,32 +635,32 @@ function compareResumeToTemplate(resumeText, template) {
   
   // Also detect sections for backward compatibility
   const sectionFlags = detectSections(resumeText);
-  const missingSections = template.requiredSections?.filter(label => {
+  const missingSections = requiredSections.filter(label => {
     const section = SECTION_DEFINITIONS.find(s => s.label === label);
     return section ? !sectionFlags[section.key] : false;
-  }) || [];
+  });
+  const matchPercentage = result.metrics.total_keywords > 0
+    ? Math.round((result.metrics.matched / result.metrics.total_keywords) * 100)
+    : 0;
   
   return {
-    matchPercentage: result.metrics.total_keywords > 0 
-      ? Math.round((result.metrics.matched / result.metrics.total_keywords) * 100)
-      : 0,
+    matchPercentage,
     matchedKeywords: template.keywords.filter(k => !result.missing_keywords.includes(k)),
     missingKeywords: result.missing_keywords,
     missingSections,
-    suggestions: buildSuggestions(missingSections, result.missing_keywords, result.metrics.total_keywords > 0 
-      ? Math.round((result.metrics.matched / result.metrics.total_keywords) * 100)
-      : 0),
+    suggestions: buildSuggestions(missingSections, result.missing_keywords, matchPercentage),
     template: {
       keywordCount: result.metrics.total_keywords,
-      sections: template.requiredSections,
+      sections: requiredSections,
     },
     scribbleAnnotations: result.annotations,
   };
 }
 
-function extractText(filePathOrBuffer, filename) {
+async function extractText(filePathOrBuffer, filename) {
   try {
     const ext = filename.toLowerCase().split('.').pop();
+    const isBinaryDoc = ext === 'pdf' || ext === 'doc' || ext === 'docx';
     
     // PDF: use pdf-parse
     if (ext === 'pdf') {
@@ -523,7 +678,7 @@ function extractText(filePathOrBuffer, filename) {
         }
         
         if (dataBuffer) {
-          const data = pdfParse(dataBuffer);
+          const data = await pdfParse(dataBuffer);
           if (data && data.text && data.text.length > 50) {
             return data.text;
           }
@@ -534,7 +689,7 @@ function extractText(filePathOrBuffer, filename) {
     }
     
     // Text file
-    if (ext === 'txt' || typeof filePathOrBuffer === 'string') {
+    if (ext === 'txt') {
       const fs = require('fs');
       let text;
       if (fs.existsSync(filePathOrBuffer)) {
@@ -548,12 +703,12 @@ function extractText(filePathOrBuffer, filename) {
     
     // Try as buffer
     let text;
-    if (Buffer.isBuffer(filePathOrBuffer)) {
+    if (!isBinaryDoc && Buffer.isBuffer(filePathOrBuffer)) {
       text = filePathOrBuffer.toString('utf-8');
-    } else if (typeof filePathOrBuffer === 'string') {
+    } else if (!isBinaryDoc && typeof filePathOrBuffer === 'string') {
       text = filePathOrBuffer;
     }
-    if (!text.startsWith('%PDF-')) {
+    if (text && !text.startsWith('%PDF-')) {
       const letterCount = (text.match(/[a-zA-Z]/g) || []).length;
       if (letterCount > 50) return text;
     }
@@ -759,17 +914,17 @@ app.get('/institutions/:id/template', (req, res) => {
   res.json({ hasTemplate: true });
 });
 
-app.post('/institutions/template', authenticateToken, upload.single('template'), (req, res) => {
+app.post('/institutions/template', authenticateToken, upload.single('template'), async (req, res) => {
   let text = null;
 
   // Try file path first
   if (req.file && req.file.path) {
-    text = extractText(req.file.path, req.file.originalname);
+    text = await extractText(req.file.path, req.file.originalname);
   }
   
   // Fallback to buffer
   if (!text && req.file && req.file.buffer) {
-    text = extractText(req.file.buffer, req.file.originalname);
+    text = await extractText(req.file.buffer, req.file.originalname);
   }
 
   if (!text && req.body && req.body.text) {
@@ -780,7 +935,8 @@ app.post('/institutions/template', authenticateToken, upload.single('template'),
     return res.status(400).json({ error: 'ATS template text is required (PDF/DOC/TXT or raw text).' });
   }
 
-  const template = buildTemplate(text);
+  const templateConfig = parseTemplateConfig(req.body?.templateConfig || req.body?.config);
+  const template = buildTemplate(text, templateConfig);
   if (template.keywords.length === 0) {
     return res.status(400).json({ error: 'No usable keywords found in the ATS template.' });
   }
@@ -789,6 +945,7 @@ app.post('/institutions/template', authenticateToken, upload.single('template'),
     text,
     keywords: template.keywords,
     sections: template.requiredSections,
+    config: template.config,
     updatedAt: new Date().toISOString(),
   };
   saveData(db);
@@ -830,15 +987,39 @@ app.get('/institutions/template', authenticateToken, (req, res) => {
   });
 });
 
-app.post('/compare-resume', upload.single('resume'), (req, res) => {
-  const institutionId = req.body.institutionId;
-  if (!institutionId) {
-    return res.status(400).json({ error: 'Institution ID is required' });
-  }
+app.post('/compare-resume', upload.single('resume'), async (req, res) => {
+  const templateSource = String(req.body?.templateSource || 'INSTITUTION_TEMPLATE').toUpperCase();
+  const requestConfig = parseTemplateConfig(req.body?.templateConfig || req.body?.config);
 
-  const template = db.templates[institutionId];
-  if (!template) {
-    return res.status(400).json({ error: 'This institution has not uploaded an ATS template yet.' });
+  let effectiveTemplate = null;
+  if (templateSource === 'SYSTEM_TEMPLATE') {
+    effectiveTemplate = buildTemplate(SYSTEM_TEMPLATE_TEXT, requestConfig);
+  } else {
+    const institutionId = req.body.institutionId;
+    if (!institutionId) {
+      return res.status(400).json({ error: 'Institution ID is required' });
+    }
+
+    const template = db.templates[institutionId];
+    if (!template) {
+      return res.status(400).json({ error: 'This institution has not uploaded an ATS template yet.' });
+    }
+
+    const cleanedTemplateKeywords = sanitizeTemplateKeywords(template.keywords || []);
+    const mergedConfig = parseTemplateConfig(template.config || requestConfig);
+    if (cleanedTemplateKeywords.length > 0) {
+      const previous = JSON.stringify(template.keywords || []);
+      const cleaned = JSON.stringify(cleanedTemplateKeywords);
+      if (previous !== cleaned) {
+        db.templates[institutionId].keywords = cleanedTemplateKeywords;
+        saveData(db);
+      }
+    }
+    effectiveTemplate = {
+      ...template,
+      keywords: cleanedTemplateKeywords.length > 0 ? cleanedTemplateKeywords : (template.keywords || []),
+      config: mergedConfig,
+    };
   }
 
   let text = null;
@@ -847,13 +1028,13 @@ app.post('/compare-resume', upload.single('resume'), (req, res) => {
   // Try file path first (disk storage)
   if (req.file && req.file.path) {
     debugInfo.filePath = req.file.path;
-    text = extractText(req.file.path, req.file.originalname);
+    text = await extractText(req.file.path, req.file.originalname);
     debugInfo.extracted = text ? text.substring(0, 100) : null;
   }
   
   // Fallback to buffer
   if (!text && req.file && req.file.buffer) {
-    text = extractText(req.file.buffer, req.file.originalname);
+    text = await extractText(req.file.buffer, req.file.originalname);
   }
 
   if (!text && req.body && req.body.text) {
@@ -862,39 +1043,30 @@ app.post('/compare-resume', upload.single('resume'), (req, res) => {
 
   if (!text || text.trim().length < 50) {
     debugInfo.error = 'No text extracted';
-    debugInfo.templateHasText = template.text ? 'yes' : 'no';
-    debugInfo.templateLength = template.text?.length;
+    debugInfo.templateHasText = effectiveTemplate.text ? 'yes' : 'no';
+    debugInfo.templateLength = effectiveTemplate.text?.length;
     console.log('DEBUG compare-resume:', JSON.stringify(debugInfo, null, 2));
     return res.status(400).json({ error: 'Resume text is required (PDF/DOC/TXT or raw text).', debug: debugInfo });
   }
 
-  // Compare using deterministic engine
-  const result = compareResume(text, template.text, { config: { strictness: 'relaxed' } });
+  // Strict deterministic output
+  const analysis = compareResume(text, effectiveTemplate.text, effectiveTemplate.config || requestConfig);
+  debugInfo.result = analysis;
+  console.log('DEBUG compare-result:', JSON.stringify(analysis, null, 2));
   
-  debugInfo.result = result;
-  console.log('DEBUG compare-result:', JSON.stringify(result, null, 2));
-  
-  return res.json({
-    matchPercentage: result.metrics.total_keywords > 0 
-      ? Math.round((result.metrics.matched / result.metrics.total_keywords) * 100)
-      : 0,
-    matchedKeywords: result.missing_keywords.length > 0 
-      ? template.keywords.filter(k => !result.missing_keywords.includes(k))
-      : template.keywords,
-    missingKeywords: result.missing_keywords,
-    scribbleAnnotations: result.annotations,
-    section_issues: result.section_issues,
-    resumeText: text.substring(0, 500), // For display
-    debug: result
-  });
+  return res.json(analysis);
 });
 
-app.post('/analyze-resume', upload.single('resume'), (req, res) => {
+app.post('/analyze-resume', upload.single('resume'), async (req, res) => {
   try {
     let text = null;
 
-    if (req.file && req.file.buffer) {
-      text = extractText(req.file.buffer, req.file.originalname);
+    if (req.file && req.file.path) {
+      text = await extractText(req.file.path, req.file.originalname);
+    }
+
+    if (!text && req.file && req.file.buffer) {
+      text = await extractText(req.file.buffer, req.file.originalname);
     }
 
     if (!text && req.body && req.body.text) {

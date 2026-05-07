@@ -36,6 +36,18 @@ export interface AnalysisResult {
   }[];
 }
 
+interface StrictEngineResponse {
+  metrics: {
+    total_keywords: number;
+    matched: number;
+    missing: number;
+    section_issues: number;
+  };
+  missing_keywords: string[];
+  section_issues: string[];
+  annotations: string[];
+}
+
 export interface TemplateStatus {
   keywordCount: number;
   keywords: string[];
@@ -143,6 +155,48 @@ export async function compareResume(file: File, institutionId: string): Promise<
   const data = await parseJsonResponse(res);
   if (!res.ok) {
     throw new Error(data?.error || 'Failed to compare resume.');
+  }
+
+  if (data?.metrics && Array.isArray(data?.missing_keywords)) {
+    const strict = data as StrictEngineResponse;
+    const totalKeywords = Number(strict.metrics.total_keywords || 0);
+    const matched = Number(strict.metrics.matched || 0);
+    const matchPercentage = totalKeywords > 0 ? Math.round((matched / totalKeywords) * 100) : 0;
+    const missingSections = (strict.section_issues || [])
+      .map((issue) => {
+        const match = issue.match(/missing section - ([^\]]+)/i);
+        return match?.[1] || '';
+      })
+      .filter(Boolean);
+
+    const result: AnalysisResult = {
+      matchPercentage,
+      matchedKeywords: [],
+      missingKeywords: strict.missing_keywords || [],
+      missingSections,
+      suggestions: [
+        ...(strict.missing_keywords?.length
+          ? [{
+              category: 'Keywords',
+              message: `Add ATS keywords: ${strict.missing_keywords.slice(0, 8).join(', ')}.`,
+              impact: 'high' as const,
+            }]
+          : []),
+        ...(missingSections.length
+          ? [{
+              category: 'Structure',
+              message: `Add missing sections: ${missingSections.join(', ')}.`,
+              impact: 'high' as const,
+            }]
+          : []),
+      ],
+      template: {
+        keywordCount: totalKeywords,
+        sections: [],
+      },
+    };
+    (result as any).annotations = strict.annotations || [];
+    return result;
   }
 
   return data as AnalysisResult;

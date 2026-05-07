@@ -277,30 +277,31 @@ export default function AnalysisView({ results, onBack }: Props) {
             <h2 className="text-lg font-bold text-slate-900 dark:text-white">Resume Scribbles</h2>
           </div>
           
-          {/* Handle string annotations from new backend */}
-          {(results as any).annotations?.length > 0 ? (
+          {((results as any).annotations?.length > 0 || (results as any).scribbleAnnotations?.length > 0) ? (
             <div className="space-y-3">
-              {(results as any).annotations.map((ann: string, i: number) => (
-                <motion.div
-                  key={i}
-                  initial={{ opacity: 0, x: -10 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: 0.2 + i * 0.05 }}
-                  className={`p-4 rounded-xl border-2 transition-all ${
-                    ann.includes('[MISSING]') || ann.includes('[ARROW]') || ann.includes('[STRIKE]')
-                      ? 'bg-red-50 dark:bg-red-900/10 border-red-300 dark:border-red-700' 
-                      : 'bg-amber-50 dark:bg-amber-900/10 border-amber-300 dark:border-amber-700'
-                  }`}
-                >
-                  <p className="font-mono text-sm font-bold text-red-600 dark:text-red-400">
-                    {ann}
-                  </p>
-                </motion.div>
-              ))}
-            </div>
-          ) : (results as any).scribbleAnnotations?.length > 0 ? (
-            <div className="space-y-3">
-              {(results as any).scribbleAnnotations.map((ann: any, i: number) => (
+              {(((results as any).annotations || (results as any).scribbleAnnotations) as any[]).map((ann: any, i: number) => {
+                if (typeof ann === 'string') {
+                  const isCritical = ann.includes('[MISSING]') || ann.includes('[ARROW]') || ann.includes('[STRIKE]') || ann.includes('[CIRCLE]');
+                  return (
+                    <motion.div
+                      key={i}
+                      initial={{ opacity: 0, x: -10 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: 0.2 + i * 0.05 }}
+                      className={`p-4 rounded-xl border-2 transition-all ${
+                        isCritical
+                          ? 'bg-red-50 dark:bg-red-900/10 border-red-300 dark:border-red-700'
+                          : 'bg-amber-50 dark:bg-amber-900/10 border-amber-300 dark:border-amber-700'
+                      }`}
+                    >
+                      <p className={`font-mono text-sm font-bold ${isCritical ? 'text-red-600 dark:text-red-400' : 'text-amber-600 dark:text-amber-400'}`}>
+                        {ann}
+                      </p>
+                    </motion.div>
+                  );
+                }
+
+                return (
                 <motion.div
                   key={i}
                   initial={{ opacity: 0, x: -10 }}
@@ -314,19 +315,20 @@ export default function AnalysisView({ results, onBack }: Props) {
                 >
                   <div className="flex items-center justify-between mb-2">
                     <div className="flex items-center gap-2">
-                      <span className={`font-bold text-sm ${ann.type === 'missing_keyword' ? 'text-red-600' : 'text-amber-600'}`}>{ann.mark}</span>
+                      <span className={`font-bold text-sm ${ann.type === 'missing_keyword' ? 'text-red-600' : 'text-amber-600'}`}>{ann.mark || '•'}</span>
                       <span className="px-2 py-1 bg-white dark:bg-slate-800 rounded-lg text-xs font-bold text-slate-600 dark:text-slate-300">
-                        {ann.type === 'missing_keyword' ? `Missing: ${ann.keyword}` : ann.section}
+                        {ann.type === 'missing_keyword' ? `Missing: ${ann.keyword || 'keyword'}` : (ann.section || 'Section')}
                       </span>
                     </div>
                   </div>
                   <p className="text-sm text-slate-600 dark:text-slate-300">
                     {ann.type === 'missing_keyword' 
-                      ? `Found in resume but not matching template: "${ann.keyword}"`
-                      : `${ann.section} section needs improvement`}
+                      ? `Found in resume but not matching template: "${ann.keyword || 'keyword'}"`
+                      : `${ann.section || 'Selected'} section needs improvement`}
                   </p>
                 </motion.div>
-              ))}
+                );
+              })}
             </div>
           ) : results.resumeText ? (
             <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-4">
