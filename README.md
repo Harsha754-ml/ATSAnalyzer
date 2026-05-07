@@ -35,7 +35,7 @@
 
 ## About
 
-The **ATS Resume Comparator System** is a full-stack web application that helps students improve their resumes by comparing them against ATS-friendly templates. Admins upload an ideal resume template (containing the ideal structure and required keywords), and students can upload their resumes to receive:
+The **ATS Resume Comparator System** is a full-stack web application that helps students improve their resumes by comparing them against ATS-friendly templates. Admins upload an ideal resume template (containing the ideal structure and required keywords), and students can upload their resumes to receive: shreays
 
 - **Match Percentage** - How closely their resume aligns with the template
 - **Missing Skills** - Key skills/keywords they're lacking
