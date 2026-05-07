@@ -1,11 +1,16 @@
-﻿import React, { useState, useRef } from 'react';
+﻿import React, { useState, useRef, useEffect } from 'react';
 import { motion, useMotionValue, useTransform, useSpring } from 'motion/react';
 import {
   Upload, Sparkles, AlertCircle, CheckCircle2,
   ArrowRight, Zap, FileText, Cpu, Globe,
   Moon, Sun, Volume2, VolumeX, Eye, EyeOff, Wifi, WifiOff,
+  X, Lock, Building2, User, Mail, KeyRound, LogOut,
 } from 'lucide-react';
-import { compareResume, uploadAtsTemplate, AnalysisResult, TemplateStatus } from './services/geminiService';
+import { 
+  compareResume, uploadAtsTemplate, AnalysisResult, TemplateStatus,
+  login, register, logout, getCurrentUser, getInstitutions, Institution,
+  getMyTemplate
+} from './services/geminiService';
 import { useTheme } from './context/ThemeContext';
 import { Switch } from '../components/ui/material-design-3-switch';
 
@@ -62,7 +67,18 @@ const TiltCard = ({ children, className = '' }: { children: React.ReactNode; cla
 };
 
 // â”€â”€â”€ Header with toggles â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-const Header = ({ onGetStarted }: { onGetStarted: () => void }) => {
+interface AuthUser {
+  id: string;
+  name: string;
+  email: string;
+}
+
+const Header = ({ onGetStarted, currentUser, onLogout, onLoginClick }: { 
+  onGetStarted: () => void;
+  currentUser: AuthUser | null;
+  onLogout: () => void;
+  onLoginClick: () => void;
+}) => {
   const { isDark, toggleTheme } = useTheme();
   const [soundOn,   setSoundOn]   = useState(true);
   const [compact,   setCompact]   = useState(false);
@@ -146,13 +162,28 @@ const Header = ({ onGetStarted }: { onGetStarted: () => void }) => {
           </span>
         </div>
 
-        {/* Login */}
-        <button
-          onClick={onGetStarted}
-          className="px-5 py-2 bg-slate-900 dark:bg-blue-600 text-white rounded-lg text-sm font-semibold hover:bg-blue-600 dark:hover:bg-blue-500 transition-all"
-        >
-          Login
-        </button>
+        {/* Login / User */}
+        {currentUser ? (
+          <div className="flex items-center gap-3">
+            <span className="text-sm font-medium text-slate-600 dark:text-slate-300 hidden sm:block">
+              {currentUser.name}
+            </span>
+            <button
+              onClick={onLogout}
+              className="px-4 py-2 bg-red-50 dark:bg-red-900/30 text-red-600 dark:text-red-400 rounded-lg text-sm font-semibold hover:bg-red-100 dark:hover:bg-red-900/50 transition-all flex items-center gap-2"
+            >
+              <LogOut className="w-4 h-4" />
+              <span className="hidden sm:inline">Logout</span>
+            </button>
+          </div>
+        ) : (
+          <button
+            onClick={onLoginClick}
+            className="px-5 py-2 bg-slate-900 dark:bg-blue-600 text-white rounded-lg text-sm font-semibold hover:bg-blue-600 dark:hover:bg-blue-500 transition-all"
+          >
+            Login
+          </button>
+        )}
       </div>
     </header>
   );
@@ -326,10 +357,50 @@ export default function App() {
   const [resumeError, setResumeError] = useState<string | null>(null);
   const [isTemplateDragging, setIsTemplateDragging] = useState(false);
   const [isResumeDragging, setIsResumeDragging] = useState(false);
+  const [showAuthModal, setShowAuthModal] = useState(false);
+  const [currentUser, setCurrentUser] = useState<AuthUser | null>(getCurrentUser());
+  const [institutions, setInstitutions] = useState<Institution[]>([]);
+  const [selectedInstitution, setSelectedInstitution] = useState('');
   const templateInputRef = useRef<HTMLInputElement>(null);
   const resumeInputRef = useRef<HTMLInputElement>(null);
 
+  useEffect(() => {
+    loadInstitutions();
+    loadMyTemplate();
+  }, []);
+
+  const loadInstitutions = async () => {
+    try {
+      const insts = await getInstitutions();
+      setInstitutions(insts);
+    } catch (e) { console.error('Failed to load institutions'); }
+  };
+
+  const loadMyTemplate = async () => {
+    if (!currentUser) return;
+    try {
+      const template = await getMyTemplate();
+      if (template) setTemplateStatus(template);
+    } catch (e) { console.error('Failed to load template'); }
+  };
+
+  const handleLogout = () => {
+    logout();
+    setCurrentUser(null);
+    setTemplateStatus(null);
+  };
+
+  const handleAuthSuccess = () => {
+    setCurrentUser(getCurrentUser());
+    loadMyTemplate();
+  };
+
   const handleTemplateUpload = async (file: File) => {
+    if (!currentUser) {
+      setTemplateError('Please login to upload a template.');
+      setShowAuthModal(true);
+      return;
+    }
     setTemplateUploading(true);
     setTemplateError(null);
     try {
@@ -345,14 +416,14 @@ export default function App() {
   };
 
   const handleResumeUpload = async (file: File) => {
-    if (!templateStatus) {
-      setResumeError('Upload the ATS template first.');
+    if (!selectedInstitution) {
+      setResumeError('Please select an institution/company first.');
       return;
     }
     setAnalyzing(true);
     setResumeError(null);
     try {
-      const result = await compareResume(file);
+      const result = await compareResume(file, selectedInstitution);
       setResults(result);
       setView('report');
     } catch (err) {
@@ -372,7 +443,12 @@ export default function App() {
   return (
     <div className="min-h-screen bg-white dark:bg-[#0d1117] transition-colors duration-300">      <ScrollProgressBar />
       <ThreeBackground />
-      <Header onGetStarted={() => document.getElementById('hero')?.scrollIntoView({ behavior: 'smooth' })} />
+      <Header 
+        onGetStarted={() => document.getElementById('hero')?.scrollIntoView({ behavior: 'smooth' })}
+        currentUser={currentUser}
+        onLogout={handleLogout}
+        onLoginClick={() => setShowAuthModal(true)}
+      />
 
       <main>
         {/* Hero */}
@@ -579,11 +655,19 @@ export default function App() {
                       <Upload className="w-10 h-10" />
                     </div>
                     <h3 className="text-xl font-bold mb-2 tracking-tight text-slate-900 dark:text-white uppercase">
-                      Admin: Upload ATS Template
+                      Institution: Upload Template
                     </h3>
-                    <p className="text-slate-400 dark:text-slate-500 mb-6 font-light">
-                      Upload the ideal ATS resume format with required keywords.
+                    <p className="text-slate-400 dark:text-slate-500 mb-4 font-light">
+                      {currentUser ? 'Upload your ATS template. Students will compare against this.' : 'Login to upload your institution\'s ATS template.'}
                     </p>
+                    {!currentUser && (
+                      <button
+                        onClick={() => setShowAuthModal(true)}
+                        className="btn-secondary w-full mb-4"
+                      >
+                        Login to Upload
+                      </button>
+                    )}
                     <button
                       onClick={() => templateInputRef.current?.click()}
                       className="btn-primary w-full"
@@ -633,12 +717,23 @@ export default function App() {
                     <h3 className="text-xl font-bold mb-2 tracking-tight text-slate-900 dark:text-white uppercase">
                       Student: Upload Resume
                     </h3>
-                    <p className="text-slate-400 dark:text-slate-500 mb-6 font-light">
-                      We accept PDF, Microsoft Word, or Text files (Max 5MB).
+                    <p className="text-slate-400 dark:text-slate-500 mb-4 font-light">
+                      Select the company/institution you're applying to, then upload your resume.
                     </p>
+                    <select
+                      value={selectedInstitution}
+                      onChange={(e) => setSelectedInstitution(e.target.value)}
+                      className="w-full mb-4 px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500 outline-none"
+                    >
+                      <option value="">Select Institution...</option>
+                      {institutions.filter(i => i.hasTemplate).map(inst => (
+                        <option key={inst.id} value={inst.id}>{inst.name}</option>
+                      ))}
+                    </select>
                     <button
                       onClick={() => resumeInputRef.current?.click()}
-                      className="btn-primary w-full"
+                      disabled={!selectedInstitution}
+                      className="btn-primary w-full disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                       Compare Resume
                     </button>
@@ -741,6 +836,12 @@ export default function App() {
           (c) 2026 ATS RESUME COMPARATOR
         </div>
       </footer>
+
+      <AuthModal 
+        isOpen={showAuthModal} 
+        onClose={() => setShowAuthModal(false)} 
+        onAuthSuccess={handleAuthSuccess}
+      />
     </div>
   );
 }

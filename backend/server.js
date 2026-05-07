@@ -3,15 +3,33 @@ const cors = require('cors');
 const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
+const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
 
 const app = express();
 const PORT = process.env.PORT || 5001;
+const JWT_SECRET = process.env.JWT_SECRET || 'your-super-secret-key-change-in-production';
 
-// ── Middleware ─────────────────────────────────────────────────────────────────
+const DATA_FILE = path.join(__dirname, 'data.json');
+
+function loadData() {
+  try {
+    if (fs.existsSync(DATA_FILE)) {
+      return JSON.parse(fs.readFileSync(DATA_FILE, 'utf-8'));
+    }
+  } catch (e) { console.error('Error loading data:', e.message); }
+  return { institutions: [], templates: {} };
+}
+
+function saveData(data) {
+  fs.writeFileSync(DATA_FILE, JSON.stringify(data, null, 2));
+}
+
+let db = loadData();
+
 app.use(cors());
 app.use(express.json());
 
-// ── File upload (memory storage — no disk writes needed) ──────────────────────
 const upload = multer({
   storage: multer.memoryStorage(),
   limits: { fileSize: 5 * 1024 * 1024 },
@@ -21,7 +39,6 @@ const upload = multer({
   },
 });
 
-// ── Keyword banks ─────────────────────────────────────────────────────────────
 const TECH_SKILLS = [
   'javascript','typescript','python','java','c++','c#','go','rust','php','ruby','swift','kotlin',
   'react','angular','vue','next.js','node.js','express','django','flask','spring boot',
@@ -74,13 +91,6 @@ const SECTION_DEFINITIONS = [
   { key: 'education', label: 'Education', regex: /\b(education|university|college|degree|b\.tech|bachelor|master)\b/i },
   { key: 'certifications', label: 'Certifications', regex: /\b(certif|certified|certification|certificate|coursera|udemy)\b/i },
 ];
-
-let templateStore = {
-  text: '',
-  keywords: [],
-  sections: [],
-  updatedAt: null,
-};
 
 function detectSections(text) {
   return SECTION_DEFINITIONS.reduce((acc, section) => {
@@ -183,35 +193,23 @@ function compareResumeToTemplate(text, template) {
   };
 }
 
-// ── Extract text from buffer ──────────────────────────────────────────────────
 function extractText(buffer, filename) {
   try {
-    // Try reading as UTF-8 text first (works for .txt and some PDFs)
     const text = buffer.toString('utf-8');
-
-    // If it looks like readable text (has enough letters), use it
     const letterCount = (text.match(/[a-zA-Z]/g) || []).length;
     if (letterCount > 50) return text;
 
-    // For binary PDFs: extract any readable strings
     const readable = text.replace(/[^\x20-\x7E\n\r\t]/g, ' ').replace(/\s{3,}/g, ' ').trim();
     if (readable.length > 50) return readable;
-  } catch (e) { /* fall through */ }
-
+  } catch (e) { }
   return null;
 }
 
-// ── Analyze text ──────────────────────────────────────────────────────────────
 function analyzeText(text) {
   const lower = text.toLowerCase();
-
-  // Find skills
   const skills = TECH_SKILLS.filter(s => lower.includes(s));
-
-  // Find missing recommended skills
   const missingSkills = RECOMMENDED_SKILLS.filter(s => !lower.includes(s)).slice(0, 6);
 
-  // Detect sections
   const hasContact    = /\b(email|phone|linkedin|github|contact)\b/i.test(text);
   const hasEducation  = /\b(education|university|college|degree|b\.tech|bachelor|master)\b/i.test(text);
   const hasExperience = /\b(experience|work|internship|employment|company)\b/i.test(text);
@@ -220,7 +218,6 @@ function analyzeText(text) {
   const hasSummary    = /\b(summary|objective|profile|about)\b/i.test(text);
   const hasCerts      = /\b(certif|certified|certification|certificate|coursera|udemy)\b/i.test(text);
 
-  // Extract name (first line that looks like a name)
   const lines = text.split('\n').map(l => l.trim()).filter(Boolean);
   let name = 'Unknown';
   for (const line of lines.slice(0, 8)) {
@@ -228,12 +225,10 @@ function analyzeText(text) {
   }
   if (name === 'Unknown' && lines[0] && lines[0].length < 40) name = lines[0];
 
-  // Extract contact
   const emails = text.match(/[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/g) || [];
   const phones = text.match(/(\+?\d[\d\s\-().]{7,}\d)/g) || [];
   const contact = emails[0] || phones[0] || '';
 
-  // Extract projects
   const projects = [];
   let inProjects = false;
   for (let i = 0; i < lines.length; i++) {
@@ -241,10 +236,9 @@ function analyzeText(text) {
     if (inProjects && /^(experience|education|skills|certif)/i.test(lines[i])) break;
     if (inProjects && lines[i].length > 8 && lines[i].length < 80 && projects.length < 5) {
       projects.push(lines[i]);
-      i++; // skip description line
+      i++;
     }
   }
-  // Fallback: find lines with build verbs
   if (projects.length === 0) {
     lines.forEach(l => {
       if (/\b(built|developed|created|designed)\b/i.test(l) && projects.length < 3) {
@@ -253,7 +247,6 @@ function analyzeText(text) {
     });
   }
 
-  // Extract certifications
   const certifications = [];
   let inCerts = false;
   for (const line of lines) {
@@ -266,7 +259,6 @@ function analyzeText(text) {
     if (certMatches) certMatches.forEach(m => certifications.push(m.trim()));
   }
 
-  // Calculate score
   let score = 0;
   if (hasContact)    score += 10;
   if (hasEducation)  score += 10;
@@ -284,7 +276,6 @@ function analyzeText(text) {
   if (/github/i.test(text)) score += 2;
   score = Math.min(100, Math.max(10, score));
 
-  // Pick relevant suggestions
   const suggestions = [];
   if (!hasContact) suggestions.push(SUGGESTION_POOL[0], SUGGESTION_POOL[1]);
   if (!hasSummary) suggestions.push(SUGGESTION_POOL[3]);
@@ -294,14 +285,12 @@ function analyzeText(text) {
   if (missingSkills.length > 3) suggestions.push({ category: 'Keywords', message: `Consider adding: ${missingSkills.slice(0, 4).join(', ')}.`, impact: 'medium' });
   if (words < 150) suggestions.push(SUGGESTION_POOL[12]);
   if (!hasCerts) suggestions.push(SUGGESTION_POOL[16]);
-  suggestions.push(SUGGESTION_POOL[17]); // always add proofread tip
-  // Cap at 8 suggestions
+  suggestions.push(SUGGESTION_POOL[17]);
   const finalSuggestions = suggestions.slice(0, 8);
 
   return { score, skills, missingSkills, name, contact, projects, certifications, suggestions: finalSuggestions };
 }
 
-// ── Fallback response (NEVER fails) ──────────────────────────────────────────
 function fallbackResponse() {
   return {
     score: 75 + Math.floor(Math.random() * 15),
@@ -322,10 +311,97 @@ function fallbackResponse() {
   };
 }
 
-// ══════════════════════════════════════════════════════════════════════════════
-// Legacy analyzer endpoint — POST /analyze-resume
-// ══════════════════════════════════════════════════════════════════════════════
-app.post('/admin/template', upload.single('template'), (req, res) => {
+const authenticateToken = (req, res, next) => {
+  const authHeader = req.headers['authorization'];
+  const token = authHeader && authHeader.split(' ')[1];
+  if (!token) return res.status(401).json({ error: 'Authentication required' });
+
+  jwt.verify(token, JWT_SECRET, (err, user) => {
+    if (err) return res.status(403).json({ error: 'Invalid token' });
+    req.user = user;
+    next();
+  });
+};
+
+app.post('/auth/register', async (req, res) => {
+  try {
+    const { name, email, password } = req.body;
+    if (!name || !email || !password) {
+      return res.status(400).json({ error: 'Name, email and password are required' });
+    }
+
+    if (db.institutions.find(i => i.email === email)) {
+      return res.status(400).json({ error: 'Email already registered' });
+    }
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+    const institution = {
+      id: Date.now().toString(),
+      name,
+      email,
+      password: hashedPassword,
+      createdAt: new Date().toISOString()
+    };
+
+    db.institutions.push(institution);
+    db.templates[institution.id] = null;
+    saveData(db);
+
+    const token = jwt.sign({ id: institution.id, email: institution.email, name: institution.name }, JWT_SECRET, { expiresIn: '7d' });
+    res.json({ token, institution: { id: institution.id, name: institution.name, email: institution.email } });
+  } catch (err) {
+    res.status(500).json({ error: 'Registration failed' });
+  }
+});
+
+app.post('/auth/login', async (req, res) => {
+  try {
+    const { email, password } = req.body;
+    if (!email || !password) {
+      return res.status(400).json({ error: 'Email and password are required' });
+    }
+
+    const institution = db.institutions.find(i => i.email === email);
+    if (!institution) {
+      return res.status(401).json({ error: 'Invalid credentials' });
+    }
+
+    const validPassword = await bcrypt.compare(password, institution.password);
+    if (!validPassword) {
+      return res.status(401).json({ error: 'Invalid credentials' });
+    }
+
+    const token = jwt.sign({ id: institution.id, email: institution.email, name: institution.name }, JWT_SECRET, { expiresIn: '7d' });
+    res.json({ token, institution: { id: institution.id, name: institution.name, email: institution.email } });
+  } catch (err) {
+    res.status(500).json({ error: 'Login failed' });
+  }
+});
+
+app.get('/auth/me', authenticateToken, (req, res) => {
+  const institution = db.institutions.find(i => i.id === req.user.id);
+  if (!institution) return res.status(404).json({ error: 'Institution not found' });
+  res.json({ id: institution.id, name: institution.name, email: institution.email });
+});
+
+app.get('/institutions', (req, res) => {
+  const institutions = db.institutions.map(i => ({
+    id: i.id,
+    name: i.name,
+    hasTemplate: !!db.templates[i.id]
+  }));
+  res.json(institutions);
+});
+
+app.get('/institutions/:id/template', (req, res) => {
+  const template = db.templates[req.params.id];
+  if (!template) {
+    return res.status(404).json({ error: 'No template found for this institution' });
+  }
+  res.json({ hasTemplate: true });
+});
+
+app.post('/institutions/template', authenticateToken, upload.single('template'), (req, res) => {
   let text = null;
 
   if (req.file && req.file.buffer) {
@@ -345,43 +421,51 @@ app.post('/admin/template', upload.single('template'), (req, res) => {
     return res.status(400).json({ error: 'No usable keywords found in the ATS template.' });
   }
 
-  templateStore = {
+  db.templates[req.user.id] = {
     text,
     keywords: template.keywords,
     sections: template.requiredSections,
     updatedAt: new Date().toISOString(),
   };
+  saveData(db);
 
-  return res.json({
+  res.json({
     status: 'ok',
     template: {
       keywordCount: template.keywords.length,
       keywords: template.keywords,
       sections: template.requiredSections,
-      updatedAt: templateStore.updatedAt,
+      updatedAt: db.templates[req.user.id].updatedAt,
     },
   });
 });
 
-app.get('/admin/template', (req, res) => {
-  if (!templateStore.text) {
+app.get('/institutions/template', authenticateToken, (req, res) => {
+  const template = db.templates[req.user.id];
+  if (!template) {
     return res.status(404).json({ status: 'missing', error: 'No ATS template uploaded yet.' });
   }
 
-  return res.json({
+  res.json({
     status: 'ok',
     template: {
-      keywordCount: templateStore.keywords.length,
-      keywords: templateStore.keywords,
-      sections: templateStore.sections,
-      updatedAt: templateStore.updatedAt,
+      keywordCount: template.keywords.length,
+      keywords: template.keywords,
+      sections: template.sections,
+      updatedAt: template.updatedAt,
     },
   });
 });
 
 app.post('/compare-resume', upload.single('resume'), (req, res) => {
-  if (!templateStore.text) {
-    return res.status(400).json({ error: 'Upload an ATS template before comparing resumes.' });
+  const institutionId = req.body.institutionId;
+  if (!institutionId) {
+    return res.status(400).json({ error: 'Institution ID is required' });
+  }
+
+  const template = db.templates[institutionId];
+  if (!template) {
+    return res.status(400).json({ error: 'This institution has not uploaded an ATS template yet.' });
   }
 
   let text = null;
@@ -398,9 +482,9 @@ app.post('/compare-resume', upload.single('resume'), (req, res) => {
   }
 
   const result = compareResumeToTemplate(text, {
-    text: templateStore.text,
-    keywords: templateStore.keywords,
-    requiredSections: templateStore.sections,
+    text: template.text,
+    keywords: template.keywords,
+    requiredSections: template.sections,
   });
 
   return res.json(result);
@@ -410,50 +494,42 @@ app.post('/analyze-resume', upload.single('resume'), (req, res) => {
   try {
     let text = null;
 
-    // Try to extract text from uploaded file
     if (req.file && req.file.buffer) {
       text = extractText(req.file.buffer, req.file.originalname);
     }
 
-    // Try body text as fallback
     if (!text && req.body && req.body.text) {
       text = req.body.text;
     }
 
-    // If we got text, analyze it
     if (text && text.trim().length > 20) {
       const result = analyzeText(text);
       return res.json(result);
     }
 
-    // No usable text — return fallback
     return res.json(fallbackResponse());
-
   } catch (err) {
-    // NEVER crash — always return valid data
     console.error('Analyze error (handled):', err.message);
     return res.json(fallbackResponse());
   }
 });
 
-// ── Health check ──────────────────────────────────────────────────────────────
 app.get('/', (req, res) => {
-  res.json({ status: 'ok', message: 'Resume Analyzer API', endpoint: 'POST /analyze-resume' });
+  res.json({ status: 'ok', message: 'ATS Resume Comparator API', version: '2.0' });
 });
 
-// ── Catch-all — never 404 ────────────────────────────────────────────────────
 app.use((req, res) => {
-  res.json({ status: 'ok', message: 'Use POST /analyze-resume', endpoint: 'POST /analyze-resume' });
+  res.json({ status: 'ok', message: 'Use POST /analyze-resume or POST /compare-resume' });
 });
 
-// ── Global error handler — never crash ────────────────────────────────────────
 app.use((err, req, res, next) => {
   console.error('Global error (handled):', err.message);
   res.json(fallbackResponse());
 });
 
-// ── Start ─────────────────────────────────────────────────────────────────────
 app.listen(PORT, () => {
-  console.log(`✅ Resume Analyzer API running on http://localhost:${PORT}`);
-  console.log(`📌 POST /analyze-resume — send a file or text`);
+  console.log(`✅ ATS Resume Comparator API running on http://localhost:${PORT}`);
+  console.log(`📌 Auth: POST /auth/register, POST /auth/login`);
+  console.log(`📌 Institution: GET /institutions, POST /institutions/template`);
+  console.log(`📌 Student: POST /compare-resume (with institutionId)`);
 });

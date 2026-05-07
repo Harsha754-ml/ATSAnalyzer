@@ -1,5 +1,19 @@
 const API_BASE_URL = 'http://localhost:5001';
 
+const getToken = () => localStorage.getItem('authToken');
+
+export interface Institution {
+  id: string;
+  name: string;
+  hasTemplate: boolean;
+}
+
+export interface AuthUser {
+  id: string;
+  name: string;
+  email: string;
+}
+
 export interface AnalysisResult {
   matchPercentage: number;
   matchedKeywords: string[];
@@ -28,26 +42,92 @@ async function parseJsonResponse(res: Response) {
   return text ? JSON.parse(text) : {};
 }
 
+export async function register(name: string, email: string, password: string): Promise<{ token: string; institution: AuthUser }> {
+  const res = await fetch(`${API_BASE_URL}/auth/register`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ name, email, password }),
+  });
+
+  const data = await parseJsonResponse(res);
+  if (!res.ok) {
+    throw new Error(data?.error || 'Registration failed.');
+  }
+
+  localStorage.setItem('authToken', data.token);
+  localStorage.setItem('authUser', JSON.stringify(data.institution));
+  return data;
+}
+
+export async function login(email: string, password: string): Promise<{ token: string; institution: AuthUser }> {
+  const res = await fetch(`${API_BASE_URL}/auth/login`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ email, password }),
+  });
+
+  const data = await parseJsonResponse(res);
+  if (!res.ok) {
+    throw new Error(data?.error || 'Login failed.');
+  }
+
+  localStorage.setItem('authToken', data.token);
+  localStorage.setItem('authUser', JSON.stringify(data.institution));
+  return data;
+}
+
+export function logout() {
+  localStorage.removeItem('authToken');
+  localStorage.removeItem('authUser');
+}
+
+export function getCurrentUser(): AuthUser | null {
+  const user = localStorage.getItem('authUser');
+  return user ? JSON.parse(user) : null;
+}
+
+export async function getInstitutions(): Promise<Institution[]> {
+  const res = await fetch(`${API_BASE_URL}/institutions`);
+  const data = await parseJsonResponse(res);
+  return data;
+}
+
 export async function uploadAtsTemplate(file: File): Promise<TemplateStatus> {
   const formData = new FormData();
   formData.append('template', file);
 
-  const res = await fetch(`${API_BASE_URL}/admin/template`, {
+  const token = getToken();
+  const res = await fetch(`${API_BASE_URL}/institutions/template`, {
     method: 'POST',
+    headers: token ? { 'Authorization': `Bearer ${token}` } : {},
     body: formData,
   });
 
   const data = await parseJsonResponse(res);
   if (!res.ok) {
-    throw new Error(data?.error || 'Failed to upload ATS template.');
+    throw new Error(data?.error || 'Failed to upload ATS template. Please login first.');
   }
 
   return data.template as TemplateStatus;
 }
 
-export async function compareResume(file: File): Promise<AnalysisResult> {
+export async function getMyTemplate(): Promise<TemplateStatus | null> {
+  const token = getToken();
+  if (!token) return null;
+
+  const res = await fetch(`${API_BASE_URL}/institutions/template`, {
+    headers: { 'Authorization': `Bearer ${token}` },
+  });
+
+  if (!res.ok) return null;
+  const data = await parseJsonResponse(res);
+  return data.template;
+}
+
+export async function compareResume(file: File, institutionId: string): Promise<AnalysisResult> {
   const formData = new FormData();
   formData.append('resume', file);
+  formData.append('institutionId', institutionId);
 
   const res = await fetch(`${API_BASE_URL}/compare-resume`, {
     method: 'POST',
