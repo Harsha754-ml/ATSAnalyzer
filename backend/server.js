@@ -122,15 +122,15 @@ function normalizeKeyword(kw) {
   
   let normalized = kw.toLowerCase().trim();
   
-  // Remove noise
   if (/^[0-9]+$/.test(normalized)) return null;
   if (/^[a-z]{1,2}$/.test(normalized) && normalized.length < 3) return null;
   
-  // Normalize symbols
   normalized = normalized.replace(/[#+]/g, '').replace(/\.\./g, '.').replace(/\s+/g, '');
   if (normalized.length < 2) return null;
   
-  // Map to canonical forms
+  if (/^([a-z])\1+$/.test(normalized)) return null;
+  if (/^[qwrtpsdfghjklzxcvbnm]{4,}$/.test(normalized)) return null;
+  
   const normalizations = {
     'c++': 'cpp', 'c#': 'csharp',
     'node.js': 'nodejs', 'node': 'nodejs',
@@ -158,20 +158,44 @@ function normalizeKeyword(kw) {
 function extractCleanKeywords(text) {
   if (!text) return [];
   
+  const STOPWORDS_MINIMAL = new Set([
+    'the','and','for','with','your','you','this','that','from','have','has','had','are','was','were',
+    'will','shall','can','could','should','would','may','might','must','need','want','use','used','using','able',
+    'a','an','to','of','in','on','at','by','as','is','it','or','be','if','we','our','their','they','them',
+    'he','she','his','her','its','but','not','all','any','one','two','new','old','per','via'
+  ]);
+  
   const tokens = text.toLowerCase()
     .split(/[,;\[\]\(\){}\/\\]+/)
     .join(' ')
     .split(/\s+/)
-    .map(t => t.replace(/[^a-z0-9#\+.]/g, ''))
-    .filter(t => t.length > 0);
+    .map(t => t.replace(/[^a-z0-9#\-+.]/g, ''))
+    .filter(t => t.length >= 3 && t.length <= 30)
+    .filter(t => !STOPWORDS_MINIMAL.has(t));
   
   const keywords = new Set();
+  let garbledCount = 0;
+  
   for (const token of tokens) {
     const normalized = normalizeKeyword(token);
-    if (normalized && normalized.length >= 2) keywords.add(normalized);
+    if (!normalized) continue;
+    
+    if (normalized.length <= 4 && /^[^aeiou]*[aeiou][^aeiou]*$/.test(normalized.substring(1, normalized.length - 1))) {
+      garbledCount++;
+      if (garbledCount > 20) continue;
+      continue;
+    }
+    
+    if (/^([a-z])\1+$/.test(normalized)) continue;
+    if (/^[qwrtpsdfghjklzxcvbnm]+$/.test(normalized)) continue;
+    if (/^\d+$/.test(normalized)) continue;
+    if (/^[a-z]{1,2}$/.test(normalized)) continue;
+    
+    keywords.add(normalized);
+    if (keywords.size >= 150) break;
   }
   
-  return [...keywords];
+  return [...keywords].slice(0, 150);
 }
 
 // ============================================================
@@ -778,6 +802,15 @@ app.post('/institutions/template', authenticateToken, upload.single('template'),
       updatedAt: db.templates[req.user.id].updatedAt,
     },
   });
+});
+
+app.delete('/institutions/template', authenticateToken, (req, res) => {
+  if (db.templates[req.user.id]) {
+    delete db.templates[req.user.id];
+    saveData(db);
+    return res.json({ status: 'ok', message: 'Template deleted. Re-upload a clean ATS template.' });
+  }
+  return res.status(404).json({ error: 'No template found to delete.' });
 });
 
 app.get('/institutions/template', authenticateToken, (req, res) => {
