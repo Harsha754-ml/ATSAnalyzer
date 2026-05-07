@@ -74,7 +74,7 @@ The **ATS Resume Comparator System** is a full-stack web application that helps 
 | Technology | Purpose |
 |------------|---------|
 | Express.js | API Server |
-| MongoDB + Mongoose | Database |
+| JSON File Storage | Database (no setup!) |
 | JWT | Authentication |
 | bcryptjs | Password Hashing |
 | Multer | File Uploads |
@@ -89,7 +89,6 @@ The **ATS Resume Comparator System** is a full-stack web application that helps 
 
 - **Node.js** (v18 or higher)
 - **npm** or **pnpm**
-- **MongoDB** (local or Atlas)
 
 ### Installation
 
@@ -119,22 +118,17 @@ The **ATS Resume Comparator System** is a full-stack web application that helps 
 
 ### Running the Project
 
-1. **Start MongoDB** (if using local)
-   ```bash
-   mongod
-   ```
-
-2. **Start the backend server** (Terminal 1)
+1. **Start the backend server** (Terminal 1)
    ```bash
    cd backend
    npm run dev
-   # Backend runs on http://localhost:5000
+   # Backend runs on http://localhost:5001
    ```
 
-3. **Start the frontend** (Terminal 2)
+2. **Start the frontend** (Terminal 2)
    ```bash
    npm run dev
-   # Frontend runs on http://localhost:3000
+   # Frontend runs on http://localhost:5173
    ```
 
 ---
@@ -167,15 +161,15 @@ resume-comparator/
 │   │   ├── auth.middleware.js
 │   │   ├── error.middleware.js
 │   │   └── upload.middleware.js
-│   ├── models/            # Mongoose models
 │   ├── routes/            # API routes
 │   │   ├── auth.routes.js
 │   │   ├── resume.routes.js
 │   │   └── portfolio.routes.js
 │   ├── utils/             # Utilities
+│   │   ├── jsonDb.js      # JSON file database
 │   │   ├── resumeAnalyzer.js
 │   │   └── jwt.js
-│   ├── data/              # JSON database (dev)
+│   ├── data/              # JSON data files
 │   ├── tests/             # Test files
 │   ├── server.js          # Express server
 │   └── package.json       # Dependencies
@@ -265,15 +259,14 @@ Body: { text: "Resume content..." }
 Create a `.env` file in the root directory:
 
 ```env
-PORT=5000
-MONGO_URI=mongodb://localhost:27017/resume_analyzer
+PORT=5001
 JWT_SECRET=your_secret_key_here
 JWT_EXPIRES_IN=7d
 MAX_FILE_SIZE_MB=5
 GEMINI_API_KEY=your_api_key_here
 ```
 
-> Note: The backend works without API keys using local keyword analysis. Gemini integration is optional for advanced features. MongoDB is required - use local MongoDB or MongoDB Atlas.
+> Note: The backend works without API keys using local keyword analysis. Gemini integration is optional for advanced features. Data is stored in JSON files - no database required!
 
 ---
 
@@ -304,5 +297,5 @@ This project is licensed under the **MIT License** - see the [LICENSE](LICENSE) 
 ---
 
 <div align="center">
-  <sub>Built with React + Express + MongoDB + Tailwind + Three.js</sub>
+  <sub>Built with React + Express + JSON Files + Tailwind + Three.js</sub>
 </div>
