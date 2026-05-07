@@ -1,0 +1,910 @@
+[
+  {
+    "_id": "5b26c1ba839678e8bf000c18",
+    "userId": "0d0c64935139e16fd2926eda",
+    "fileName": "P.V_Sai_Shreyas_FlowCV_Resume_2026-05-01.pdf",
+    "fileType": "pdf",
+    "filePath": "undefined_1777697265798.pdf",
+    "rawText": "\n\nP.V Sai Shreyas\npvsaishreyas2005 @gmail.com\nBanglore KA\nGitHub \n8050111781\nLinkdin\nEducation\nSAI VIDYA INSTITUTE OF TECHNOLOGY Bangalore, KA \nBachelor of Engineering in Information Science and Engineering                                    Expected: October  2027\nProjects\nDentAge AI - Dental Age Estimator \nDentAge AI is a full-stack web app that simulates dental age estimation from panoramic X-ray images, \nfeaturing an animated interface, real-time analysis, and downloadable PDF reports.\nInfoSphere\nInfoSphere is an AI-powered news aggregation platform with a cyberpunk design that delivers real-time, \nverified news tailored to your location and interests, while enabling secure citizen journalism.\nBuild Code Sensei                                                                                                                                                               On Going\nAn  AI-powered  code  review  platform  offering  real-time,  multi-language  analysis  with  explainable\nsuggestions and automated fixes, replacing manual reviews with instant, actionable mentoring.\nCertificates\nEssentials Automation \nProfessional by Automation \nAnywhere\nMY Bharath Budget Quest \n2026\nThe Bits and Bytes Of \nComputer Network By Google\nGoogle Cloud Data Analytics- \nOn Going\nViksit Bharat Young Leaders \nDialogue (VBYLD)\nTechnical Skills\nProgramming:Python, C, HTML,JAVA.                    Tools: Git/ GitHub, Jupyter, VS Code.\nPlatforms:Windows,Ubuntu.                                       Databases:MySQL.\nActivities\nNATIONAL SERVICE SCHEME (NSS) \nSai Vidya Institute of Technology                                                                                                                              Banglore,KA \nActive Volunteer – Present\nSAI VIDYA INSTITUE OF TECHNOLOGY Icons Club                                                                                          Banglore,KA\nPhotography Head – Present                                                                                                                                                     \nAdditional information\nLanguages: English, Telugu, Hindi, Kannada\nInterests: AI-Powered Education, AI-Assisted Developments",
+    "score": 65,
+    "suggestions": [
+      {
+        "category": "Contact",
+        "message": "Add your LinkedIn profile URL to increase visibility.",
+        "impact": "high"
+      },
+      {
+        "category": "Summary",
+        "message": "Add a 2-3 line professional summary at the top.",
+        "impact": "high"
+      },
+      {
+        "category": "Experience",
+        "message": "Add internships or work experience. Even personal projects count.",
+        "impact": "medium"
+      },
+      {
+        "category": "Keywords",
+        "message": "Consider adding relevant skills: react, node.js, aws, docker.",
+        "impact": "medium"
+      },
+      {
+        "category": "Overall",
+        "message": "Good start! Add more keywords and quantify your achievements.",
+        "impact": "medium"
+      }
+    ],
+    "keywords": {
+      "found": [
+        "python",
+        "java",
+        "go",
+        "mysql",
+        "git",
+        "github",
+        "html"
+      ],
+      "missing": [
+        "javascript",
+        "typescript",
+        "c++",
+        "c#",
+        "rust",
+        "php",
+        "ruby",
+        "react",
+        "angular",
+        "vue"
+      ]
+    },
+    "sections": {
+      "hasContact": true,
+      "hasEducation": true,
+      "hasExperience": false,
+      "hasSkills": true,
+      "hasProjects": true,
+      "hasSummary": false
+    },
+    "isAnalyzed": true,
+    "createdAt": "2026-05-02T04:47:45.976Z",
+    "updatedAt": "2026-05-02T04:47:45.976Z"
+  },
+  {
+    "_id": "9c0da95d688213e7ea5c7ad7",
+    "userId": "0d0c64935139e16fd2926eda",
+    "fileName": "P.V_Sai_Shreyas_FlowCV_Resume_2026-05-01.pdf",
+    "fileType": "pdf",
+    "filePath": "undefined_1777697282978.pdf",
+    "rawText": "\n\nP.V Sai Shreyas\npvsaishreyas2005 @gmail.com\nBanglore KA\nGitHub \n8050111781\nLinkdin\nEducation\nSAI VIDYA INSTITUTE OF TECHNOLOGY Bangalore, KA \nBachelor of Engineering in Information Science and Engineering                                    Expected: October  2027\nProjects\nDentAge AI - Dental Age Estimator \nDentAge AI is a full-stack web app that simulates dental age estimation from panoramic X-ray images, \nfeaturing an animated interface, real-time analysis, and downloadable PDF reports.\nInfoSphere\nInfoSphere is an AI-powered news aggregation platform with a cyberpunk design that delivers real-time, \nverified news tailored to your location and interests, while enabling secure citizen journalism.\nBuild Code Sensei                                                                                                                                                               On Going\nAn  AI-powered  code  review  platform  offering  real-time,  multi-language  analysis  with  explainable\nsuggestions and automated fixes, replacing manual reviews with instant, actionable mentoring.\nCertificates\nEssentials Automation \nProfessional by Automation \nAnywhere\nMY Bharath Budget Quest \n2026\nThe Bits and Bytes Of \nComputer Network By Google\nGoogle Cloud Data Analytics- \nOn Going\nViksit Bharat Young Leaders \nDialogue (VBYLD)\nTechnical Skills\nProgramming:Python, C, HTML,JAVA.                    Tools: Git/ GitHub, Jupyter, VS Code.\nPlatforms:Windows,Ubuntu.                                       Databases:MySQL.\nActivities\nNATIONAL SERVICE SCHEME (NSS) \nSai Vidya Institute of Technology                                                                                                                              Banglore,KA \nActive Volunteer – Present\nSAI VIDYA INSTITUE OF TECHNOLOGY Icons Club                                                                                          Banglore,KA\nPhotography Head – Present                                                                                                                                                     \nAdditional information\nLanguages: English, Telugu, Hindi, Kannada\nInterests: AI-Powered Education, AI-Assisted Developments",
+    "score": 65,
+    "suggestions": [
+      {
+        "category": "Contact",
+        "message": "Add your LinkedIn profile URL to increase visibility.",
+        "impact": "high"
+      },
+      {
+        "category": "Summary",
+        "message": "Add a 2-3 line professional summary at the top.",
+        "impact": "high"
+      },
+      {
+        "category": "Experience",
+        "message": "Add internships or work experience. Even personal projects count.",
+        "impact": "medium"
+      },
+      {
+        "category": "Keywords",
+        "message": "Consider adding relevant skills: react, node.js, aws, docker.",
+        "impact": "medium"
+      },
+      {
+        "category": "Overall",
+        "message": "Good start! Add more keywords and quantify your achievements.",
+        "impact": "medium"
+      }
+    ],
+    "keywords": {
+      "found": [
+        "python",
+        "java",
+        "go",
+        "mysql",
+        "git",
+        "github",
+        "html"
+      ],
+      "missing": [
+        "javascript",
+        "typescript",
+        "c++",
+        "c#",
+        "rust",
+        "php",
+        "ruby",
+        "react",
+        "angular",
+        "vue"
+      ]
+    },
+    "sections": {
+      "hasContact": true,
+      "hasEducation": true,
+      "hasExperience": false,
+      "hasSkills": true,
+      "hasProjects": true,
+      "hasSummary": false
+    },
+    "isAnalyzed": true,
+    "createdAt": "2026-05-02T04:48:03.156Z",
+    "updatedAt": "2026-05-02T04:48:03.156Z"
+  },
+  {
+    "_id": "0f044ae94ac01ecea1921c11",
+    "userId": "0d0c64935139e16fd2926eda",
+    "fileName": "P.V_Sai_Shreyas_FlowCV_Resume_2026-05-01.pdf",
+    "fileType": "pdf",
+    "filePath": "undefined_1777697316627.pdf",
+    "rawText": "\n\nP.V Sai Shreyas\npvsaishreyas2005 @gmail.com\nBanglore KA\nGitHub \n8050111781\nLinkdin\nEducation\nSAI VIDYA INSTITUTE OF TECHNOLOGY Bangalore, KA \nBachelor of Engineering in Information Science and Engineering                                    Expected: October  2027\nProjects\nDentAge AI - Dental Age Estimator \nDentAge AI is a full-stack web app that simulates dental age estimation from panoramic X-ray images, \nfeaturing an animated interface, real-time analysis, and downloadable PDF reports.\nInfoSphere\nInfoSphere is an AI-powered news aggregation platform with a cyberpunk design that delivers real-time, \nverified news tailored to your location and interests, while enabling secure citizen journalism.\nBuild Code Sensei                                                                                                                                                               On Going\nAn  AI-powered  code  review  platform  offering  real-time,  multi-language  analysis  with  explainable\nsuggestions and automated fixes, replacing manual reviews with instant, actionable mentoring.\nCertificates\nEssentials Automation \nProfessional by Automation \nAnywhere\nMY Bharath Budget Quest \n2026\nThe Bits and Bytes Of \nComputer Network By Google\nGoogle Cloud Data Analytics- \nOn Going\nViksit Bharat Young Leaders \nDialogue (VBYLD)\nTechnical Skills\nProgramming:Python, C, HTML,JAVA.                    Tools: Git/ GitHub, Jupyter, VS Code.\nPlatforms:Windows,Ubuntu.                                       Databases:MySQL.\nActivities\nNATIONAL SERVICE SCHEME (NSS) \nSai Vidya Institute of Technology                                                                                                                              Banglore,KA \nActive Volunteer – Present\nSAI VIDYA INSTITUE OF TECHNOLOGY Icons Club                                                                                          Banglore,KA\nPhotography Head – Present                                                                                                                                                     \nAdditional information\nLanguages: English, Telugu, Hindi, Kannada\nInterests: AI-Powered Education, AI-Assisted Developments",
+    "score": 65,
+    "suggestions": [
+      {
+        "category": "Contact",
+        "message": "Add your LinkedIn profile URL to increase visibility.",
+        "impact": "high"
+      },
+      {
+        "category": "Summary",
+        "message": "Add a 2-3 line professional summary at the top.",
+        "impact": "high"
+      },
+      {
+        "category": "Experience",
+        "message": "Add internships or work experience. Even personal projects count.",
+        "impact": "medium"
+      },
+      {
+        "category": "Keywords",
+        "message": "Consider adding relevant skills: react, node.js, aws, docker.",
+        "impact": "medium"
+      },
+      {
+        "category": "Overall",
+        "message": "Good start! Add more keywords and quantify your achievements.",
+        "impact": "medium"
+      }
+    ],
+    "keywords": {
+      "found": [
+        "python",
+        "java",
+        "go",
+        "mysql",
+        "git",
+        "github",
+        "html"
+      ],
+      "missing": [
+        "javascript",
+        "typescript",
+        "c++",
+        "c#",
+        "rust",
+        "php",
+        "ruby",
+        "react",
+        "angular",
+        "vue"
+      ]
+    },
+    "sections": {
+      "hasContact": true,
+      "hasEducation": true,
+      "hasExperience": false,
+      "hasSkills": true,
+      "hasProjects": true,
+      "hasSummary": false
+    },
+    "isAnalyzed": true,
+    "createdAt": "2026-05-02T04:48:36.838Z",
+    "updatedAt": "2026-05-02T04:48:36.838Z"
+  },
+  {
+    "_id": "e66ce3b907d2e8e95dfb6d49",
+    "userId": "089969e6ccdb1f3aa2eb8474",
+    "fileName": "resume.txt",
+    "fileType": "txt",
+    "filePath": "undefined_1777698232847.txt",
+    "rawText": "John Doe\nEmail: john@example.com\nPhone: +1234567890\nLinkedIn: linkedin.com/in/johndoe\nGitHub: github.com/johndoe\n\nSummary\nExperienced full stack developer with 3 years of experience in React, Node.js, and MongoDB.\n\nSkills\nJavaScript, TypeScript, React, Node.js, Express, MongoDB, PostgreSQL, Docker, AWS, Git\n\nExperience\nSoftware Engineer at TechCorp (2023-2025)\n- Built REST APIs serving 10k requests/day\n- Led migration from monolith to microservices\n\nProjects\nPortfolio Builder\nBuilt a full-stack portfolio generator using React and Node.js with AI-powered analysis.\n\nE-Commerce Platform  \nDeveloped a scalable e-commerce platform with payment integration using Stripe.\n\nEducation\nB.Tech Computer Science, MIT University, 2023\r\n",
+    "score": 85,
+    "suggestions": [
+      {
+        "category": "Formatting",
+        "message": "Resume is too short. Aim for 400-600 words.",
+        "impact": "high"
+      },
+      {
+        "category": "Keywords",
+        "message": "Consider adding relevant skills: python.",
+        "impact": "medium"
+      },
+      {
+        "category": "Overall",
+        "message": "Strong resume! Consider adding certifications or open source contributions.",
+        "impact": "low"
+      }
+    ],
+    "keywords": {
+      "found": [
+        "javascript",
+        "typescript",
+        "java",
+        "go",
+        "react",
+        "node.js",
+        "express",
+        "mongodb",
+        "postgresql",
+        "aws",
+        "docker",
+        "git",
+        "github",
+        "rest api",
+        "microservices"
+      ],
+      "missing": [
+        "python",
+        "c++",
+        "c#",
+        "rust",
+        "php",
+        "ruby",
+        "angular",
+        "vue",
+        "next.js",
+        "django"
+      ]
+    },
+    "sections": {
+      "hasContact": true,
+      "hasEducation": true,
+      "hasExperience": true,
+      "hasSkills": true,
+      "hasProjects": true,
+      "hasSummary": true
+    },
+    "isAnalyzed": true,
+    "createdAt": "2026-05-02T05:03:52.942Z",
+    "updatedAt": "2026-05-02T05:03:52.943Z"
+  },
+  {
+    "_id": "96af54f67ae5d4fb822ab883",
+    "userId": "1f0e6cd7e2b01421fa93b407",
+    "fileName": "test_resume.txt",
+    "fileType": "txt",
+    "filePath": "undefined_1777698379298.txt",
+    "rawText": "﻿John Doe\nEmail: john@example.com\nGitHub: github.com/johndoe\n\nSummary\nFull stack developer with experience in React and Node.js.\n\nSkills\nJavaScript, React, Node.js, MongoDB, Docker, Git, AWS, Python\n\nProjects\nPortfolio Builder\nBuilt a portfolio generator using React and Express.\n\nEducation\nB.Tech Computer Science, 2023\r\n",
+    "score": 72,
+    "suggestions": [
+      {
+        "category": "Contact",
+        "message": "Add your LinkedIn profile URL to increase visibility.",
+        "impact": "high"
+      },
+      {
+        "category": "Formatting",
+        "message": "Resume is too short. Aim for 400-600 words.",
+        "impact": "high"
+      },
+      {
+        "category": "Keywords",
+        "message": "Consider adding relevant skills: sql.",
+        "impact": "medium"
+      },
+      {
+        "category": "Overall",
+        "message": "Good start! Add more keywords and quantify your achievements.",
+        "impact": "medium"
+      }
+    ],
+    "keywords": {
+      "found": [
+        "javascript",
+        "python",
+        "java",
+        "go",
+        "react",
+        "node.js",
+        "express",
+        "mongodb",
+        "aws",
+        "docker",
+        "git",
+        "github"
+      ],
+      "missing": [
+        "typescript",
+        "c++",
+        "c#",
+        "rust",
+        "php",
+        "ruby",
+        "angular",
+        "vue",
+        "next.js",
+        "django"
+      ]
+    },
+    "sections": {
+      "hasContact": true,
+      "hasEducation": true,
+      "hasExperience": true,
+      "hasSkills": true,
+      "hasProjects": true,
+      "hasSummary": true
+    },
+    "isAnalyzed": true,
+    "createdAt": "2026-05-02T05:06:19.310Z",
+    "updatedAt": "2026-05-02T05:06:19.310Z"
+  },
+  {
+    "_id": "1aecd999a95f7459d39095c0",
+    "userId": "0d0c64935139e16fd2926eda",
+    "fileName": "P.V_Sai_Shreyas_FlowCV_Resume_2026-05-01.pdf",
+    "fileType": "pdf",
+    "filePath": "undefined_1777698616040.pdf",
+    "rawText": "\n\nP.V Sai Shreyas\npvsaishreyas2005 @gmail.com\nBanglore KA\nGitHub \n8050111781\nLinkdin\nEducation\nSAI VIDYA INSTITUTE OF TECHNOLOGY Bangalore, KA \nBachelor of Engineering in Information Science and Engineering                                    Expected: October  2027\nProjects\nDentAge AI - Dental Age Estimator \nDentAge AI is a full-stack web app that simulates dental age estimation from panoramic X-ray images, \nfeaturing an animated interface, real-time analysis, and downloadable PDF reports.\nInfoSphere\nInfoSphere is an AI-powered news aggregation platform with a cyberpunk design that delivers real-time, \nverified news tailored to your location and interests, while enabling secure citizen journalism.\nBuild Code Sensei                                                                                                                                                               On Going\nAn  AI-powered  code  review  platform  offering  real-time,  multi-language  analysis  with  explainable\nsuggestions and automated fixes, replacing manual reviews with instant, actionable mentoring.\nCertificates\nEssentials Automation \nProfessional by Automation \nAnywhere\nMY Bharath Budget Quest \n2026\nThe Bits and Bytes Of \nComputer Network By Google\nGoogle Cloud Data Analytics- \nOn Going\nViksit Bharat Young Leaders \nDialogue (VBYLD)\nTechnical Skills\nProgramming:Python, C, HTML,JAVA.                    Tools: Git/ GitHub, Jupyter, VS Code.\nPlatforms:Windows,Ubuntu.                                       Databases:MySQL.\nActivities\nNATIONAL SERVICE SCHEME (NSS) \nSai Vidya Institute of Technology                                                                                                                              Banglore,KA \nActive Volunteer – Present\nSAI VIDYA INSTITUE OF TECHNOLOGY Icons Club                                                                                          Banglore,KA\nPhotography Head – Present                                                                                                                                                     \nAdditional information\nLanguages: English, Telugu, Hindi, Kannada\nInterests: AI-Powered Education, AI-Assisted Developments",
+    "score": 65,
+    "suggestions": [
+      {
+        "category": "Contact",
+        "message": "Add your LinkedIn profile URL to increase visibility.",
+        "impact": "high"
+      },
+      {
+        "category": "Summary",
+        "message": "Add a 2-3 line professional summary at the top.",
+        "impact": "high"
+      },
+      {
+        "category": "Experience",
+        "message": "Add internships or work experience. Even personal projects count.",
+        "impact": "medium"
+      },
+      {
+        "category": "Keywords",
+        "message": "Consider adding relevant skills: react, node.js, aws, docker.",
+        "impact": "medium"
+      },
+      {
+        "category": "Overall",
+        "message": "Good start! Add more keywords and quantify your achievements.",
+        "impact": "medium"
+      }
+    ],
+    "keywords": {
+      "found": [
+        "python",
+        "java",
+        "go",
+        "mysql",
+        "git",
+        "github",
+        "html"
+      ],
+      "missing": [
+        "javascript",
+        "typescript",
+        "c++",
+        "c#",
+        "rust",
+        "php",
+        "ruby",
+        "react",
+        "angular",
+        "vue"
+      ]
+    },
+    "sections": {
+      "hasContact": true,
+      "hasEducation": true,
+      "hasExperience": false,
+      "hasSkills": true,
+      "hasProjects": true,
+      "hasSummary": false
+    },
+    "isAnalyzed": true,
+    "createdAt": "2026-05-02T05:10:16.871Z",
+    "updatedAt": "2026-05-02T05:10:16.871Z"
+  },
+  {
+    "_id": "38a0882581a17942317feaf2",
+    "userId": "0d0c64935139e16fd2926eda",
+    "fileName": "P.V_Sai_Shreyas_FlowCV_Resume_2026-05-01.pdf",
+    "fileType": "pdf",
+    "filePath": "undefined_1777715870879.pdf",
+    "rawText": "\n\nP.V Sai Shreyas\npvsaishreyas2005 @gmail.com\nBanglore KA\nGitHub \n8050111781\nLinkdin\nEducation\nSAI VIDYA INSTITUTE OF TECHNOLOGY Bangalore, KA \nBachelor of Engineering in Information Science and Engineering                                    Expected: October  2027\nProjects\nDentAge AI - Dental Age Estimator \nDentAge AI is a full-stack web app that simulates dental age estimation from panoramic X-ray images, \nfeaturing an animated interface, real-time analysis, and downloadable PDF reports.\nInfoSphere\nInfoSphere is an AI-powered news aggregation platform with a cyberpunk design that delivers real-time, \nverified news tailored to your location and interests, while enabling secure citizen journalism.\nBuild Code Sensei                                                                                                                                                               On Going\nAn  AI-powered  code  review  platform  offering  real-time,  multi-language  analysis  with  explainable\nsuggestions and automated fixes, replacing manual reviews with instant, actionable mentoring.\nCertificates\nEssentials Automation \nProfessional by Automation \nAnywhere\nMY Bharath Budget Quest \n2026\nThe Bits and Bytes Of \nComputer Network By Google\nGoogle Cloud Data Analytics- \nOn Going\nViksit Bharat Young Leaders \nDialogue (VBYLD)\nTechnical Skills\nProgramming:Python, C, HTML,JAVA.                    Tools: Git/ GitHub, Jupyter, VS Code.\nPlatforms:Windows,Ubuntu.                                       Databases:MySQL.\nActivities\nNATIONAL SERVICE SCHEME (NSS) \nSai Vidya Institute of Technology                                                                                                                              Banglore,KA \nActive Volunteer – Present\nSAI VIDYA INSTITUE OF TECHNOLOGY Icons Club                                                                                          Banglore,KA\nPhotography Head – Present                                                                                                                                                     \nAdditional information\nLanguages: English, Telugu, Hindi, Kannada\nInterests: AI-Powered Education, AI-Assisted Developments",
+    "score": 65,
+    "suggestions": [
+      {
+        "category": "Contact",
+        "message": "Add your LinkedIn profile URL to increase visibility.",
+        "impact": "high"
+      },
+      {
+        "category": "Summary",
+        "message": "Add a 2-3 line professional summary at the top.",
+        "impact": "high"
+      },
+      {
+        "category": "Experience",
+        "message": "Add internships or work experience. Even personal projects count.",
+        "impact": "medium"
+      },
+      {
+        "category": "Keywords",
+        "message": "Consider adding relevant skills: react, node.js, aws, docker.",
+        "impact": "medium"
+      },
+      {
+        "category": "Overall",
+        "message": "Good start! Add more keywords and quantify your achievements.",
+        "impact": "medium"
+      }
+    ],
+    "keywords": {
+      "found": [
+        "python",
+        "java",
+        "go",
+        "mysql",
+        "git",
+        "github",
+        "html"
+      ],
+      "missing": [
+        "javascript",
+        "typescript",
+        "c++",
+        "c#",
+        "rust",
+        "php",
+        "ruby",
+        "react",
+        "angular",
+        "vue"
+      ]
+    },
+    "sections": {
+      "hasContact": true,
+      "hasEducation": true,
+      "hasExperience": false,
+      "hasSkills": true,
+      "hasProjects": true,
+      "hasSummary": false
+    },
+    "isAnalyzed": true,
+    "createdAt": "2026-05-02T09:57:51.035Z",
+    "updatedAt": "2026-05-02T09:57:51.035Z"
+  },
+  {
+    "_id": "0dc012279ca22a1947f63250",
+    "userId": "0d0c64935139e16fd2926eda",
+    "fileName": "P.V_Sai_Shreyas_FlowCV_Resume_2026-05-01.pdf",
+    "fileType": "pdf",
+    "filePath": "undefined_1777716029080.pdf",
+    "rawText": "\n\nP.V Sai Shreyas\npvsaishreyas2005 @gmail.com\nBanglore KA\nGitHub \n8050111781\nLinkdin\nEducation\nSAI VIDYA INSTITUTE OF TECHNOLOGY Bangalore, KA \nBachelor of Engineering in Information Science and Engineering                                    Expected: October  2027\nProjects\nDentAge AI - Dental Age Estimator \nDentAge AI is a full-stack web app that simulates dental age estimation from panoramic X-ray images, \nfeaturing an animated interface, real-time analysis, and downloadable PDF reports.\nInfoSphere\nInfoSphere is an AI-powered news aggregation platform with a cyberpunk design that delivers real-time, \nverified news tailored to your location and interests, while enabling secure citizen journalism.\nBuild Code Sensei                                                                                                                                                               On Going\nAn  AI-powered  code  review  platform  offering  real-time,  multi-language  analysis  with  explainable\nsuggestions and automated fixes, replacing manual reviews with instant, actionable mentoring.\nCertificates\nEssentials Automation \nProfessional by Automation \nAnywhere\nMY Bharath Budget Quest \n2026\nThe Bits and Bytes Of \nComputer Network By Google\nGoogle Cloud Data Analytics- \nOn Going\nViksit Bharat Young Leaders \nDialogue (VBYLD)\nTechnical Skills\nProgramming:Python, C, HTML,JAVA.                    Tools: Git/ GitHub, Jupyter, VS Code.\nPlatforms:Windows,Ubuntu.                                       Databases:MySQL.\nActivities\nNATIONAL SERVICE SCHEME (NSS) \nSai Vidya Institute of Technology                                                                                                                              Banglore,KA \nActive Volunteer – Present\nSAI VIDYA INSTITUE OF TECHNOLOGY Icons Club                                                                                          Banglore,KA\nPhotography Head – Present                                                                                                                                                     \nAdditional information\nLanguages: English, Telugu, Hindi, Kannada\nInterests: AI-Powered Education, AI-Assisted Developments",
+    "score": 65,
+    "suggestions": [
+      {
+        "category": "Contact",
+        "message": "Add your LinkedIn profile URL to increase visibility.",
+        "impact": "high"
+      },
+      {
+        "category": "Summary",
+        "message": "Add a 2-3 line professional summary at the top.",
+        "impact": "high"
+      },
+      {
+        "category": "Experience",
+        "message": "Add internships or work experience. Even personal projects count.",
+        "impact": "medium"
+      },
+      {
+        "category": "Keywords",
+        "message": "Consider adding relevant skills: react, node.js, aws, docker.",
+        "impact": "medium"
+      },
+      {
+        "category": "Overall",
+        "message": "Good start! Add more keywords and quantify your achievements.",
+        "impact": "medium"
+      }
+    ],
+    "keywords": {
+      "found": [
+        "python",
+        "java",
+        "go",
+        "mysql",
+        "git",
+        "github",
+        "html"
+      ],
+      "missing": [
+        "javascript",
+        "typescript",
+        "c++",
+        "c#",
+        "rust",
+        "php",
+        "ruby",
+        "react",
+        "angular",
+        "vue"
+      ]
+    },
+    "sections": {
+      "hasContact": true,
+      "hasEducation": true,
+      "hasExperience": false,
+      "hasSkills": true,
+      "hasProjects": true,
+      "hasSummary": false
+    },
+    "isAnalyzed": true,
+    "createdAt": "2026-05-02T10:00:29.182Z",
+    "updatedAt": "2026-05-02T10:00:29.182Z"
+  },
+  {
+    "_id": "9138ddab84f0cc4fd8a7e9ad",
+    "userId": "0d0c64935139e16fd2926eda",
+    "fileName": "P.V_Sai_Shreyas_FlowCV_Resume_2026-05-01.pdf",
+    "fileType": "pdf",
+    "filePath": "undefined_1777716204421.pdf",
+    "rawText": "\n\nP.V Sai Shreyas\npvsaishreyas2005 @gmail.com\nBanglore KA\nGitHub \n8050111781\nLinkdin\nEducation\nSAI VIDYA INSTITUTE OF TECHNOLOGY Bangalore, KA \nBachelor of Engineering in Information Science and Engineering                                    Expected: October  2027\nProjects\nDentAge AI - Dental Age Estimator \nDentAge AI is a full-stack web app that simulates dental age estimation from panoramic X-ray images, \nfeaturing an animated interface, real-time analysis, and downloadable PDF reports.\nInfoSphere\nInfoSphere is an AI-powered news aggregation platform with a cyberpunk design that delivers real-time, \nverified news tailored to your location and interests, while enabling secure citizen journalism.\nBuild Code Sensei                                                                                                                                                               On Going\nAn  AI-powered  code  review  platform  offering  real-time,  multi-language  analysis  with  explainable\nsuggestions and automated fixes, replacing manual reviews with instant, actionable mentoring.\nCertificates\nEssentials Automation \nProfessional by Automation \nAnywhere\nMY Bharath Budget Quest \n2026\nThe Bits and Bytes Of \nComputer Network By Google\nGoogle Cloud Data Analytics- \nOn Going\nViksit Bharat Young Leaders \nDialogue (VBYLD)\nTechnical Skills\nProgramming:Python, C, HTML,JAVA.                    Tools: Git/ GitHub, Jupyter, VS Code.\nPlatforms:Windows,Ubuntu.                                       Databases:MySQL.\nActivities\nNATIONAL SERVICE SCHEME (NSS) \nSai Vidya Institute of Technology                                                                                                                              Banglore,KA \nActive Volunteer – Present\nSAI VIDYA INSTITUE OF TECHNOLOGY Icons Club                                                                                          Banglore,KA\nPhotography Head – Present                                                                                                                                                     \nAdditional information\nLanguages: English, Telugu, Hindi, Kannada\nInterests: AI-Powered Education, AI-Assisted Developments",
+    "score": 65,
+    "suggestions": [
+      {
+        "category": "Contact",
+        "message": "Add your LinkedIn profile URL to increase visibility.",
+        "impact": "high"
+      },
+      {
+        "category": "Summary",
+        "message": "Add a 2-3 line professional summary at the top.",
+        "impact": "high"
+      },
+      {
+        "category": "Experience",
+        "message": "Add internships or work experience. Even personal projects count.",
+        "impact": "medium"
+      },
+      {
+        "category": "Keywords",
+        "message": "Consider adding relevant skills: react, node.js, aws, docker.",
+        "impact": "medium"
+      },
+      {
+        "category": "Overall",
+        "message": "Good start! Add more keywords and quantify your achievements.",
+        "impact": "medium"
+      }
+    ],
+    "keywords": {
+      "found": [
+        "python",
+        "java",
+        "go",
+        "mysql",
+        "git",
+        "github",
+        "html"
+      ],
+      "missing": [
+        "javascript",
+        "typescript",
+        "c++",
+        "c#",
+        "rust",
+        "php",
+        "ruby",
+        "react",
+        "angular",
+        "vue"
+      ]
+    },
+    "sections": {
+      "hasContact": true,
+      "hasEducation": true,
+      "hasExperience": false,
+      "hasSkills": true,
+      "hasProjects": true,
+      "hasSummary": false
+    },
+    "isAnalyzed": true,
+    "createdAt": "2026-05-02T10:03:24.492Z",
+    "updatedAt": "2026-05-02T10:03:24.492Z"
+  },
+  {
+    "_id": "b1bb1aff9bfb485d08610ec6",
+    "userId": "0d0c64935139e16fd2926eda",
+    "fileName": "P.V_Sai_Shreyas_FlowCV_Resume_2026-05-01.pdf",
+    "fileType": "pdf",
+    "filePath": "undefined_1777717311503.pdf",
+    "rawText": "\n\nP.V Sai Shreyas\npvsaishreyas2005 @gmail.com\nBanglore KA\nGitHub \n8050111781\nLinkdin\nEducation\nSAI VIDYA INSTITUTE OF TECHNOLOGY Bangalore, KA \nBachelor of Engineering in Information Science and Engineering                                    Expected: October  2027\nProjects\nDentAge AI - Dental Age Estimator \nDentAge AI is a full-stack web app that simulates dental age estimation from panoramic X-ray images, \nfeaturing an animated interface, real-time analysis, and downloadable PDF reports.\nInfoSphere\nInfoSphere is an AI-powered news aggregation platform with a cyberpunk design that delivers real-time, \nverified news tailored to your location and interests, while enabling secure citizen journalism.\nBuild Code Sensei                                                                                                                                                               On Going\nAn  AI-powered  code  review  platform  offering  real-time,  multi-language  analysis  with  explainable\nsuggestions and automated fixes, replacing manual reviews with instant, actionable mentoring.\nCertificates\nEssentials Automation \nProfessional by Automation \nAnywhere\nMY Bharath Budget Quest \n2026\nThe Bits and Bytes Of \nComputer Network By Google\nGoogle Cloud Data Analytics- \nOn Going\nViksit Bharat Young Leaders \nDialogue (VBYLD)\nTechnical Skills\nProgramming:Python, C, HTML,JAVA.                    Tools: Git/ GitHub, Jupyter, VS Code.\nPlatforms:Windows,Ubuntu.                                       Databases:MySQL.\nActivities\nNATIONAL SERVICE SCHEME (NSS) \nSai Vidya Institute of Technology                                                                                                                              Banglore,KA \nActive Volunteer – Present\nSAI VIDYA INSTITUE OF TECHNOLOGY Icons Club                                                                                          Banglore,KA\nPhotography Head – Present                                                                                                                                                     \nAdditional information\nLanguages: English, Telugu, Hindi, Kannada\nInterests: AI-Powered Education, AI-Assisted Developments",
+    "score": 65,
+    "suggestions": [
+      {
+        "category": "Contact",
+        "message": "Add your LinkedIn profile URL to increase visibility.",
+        "impact": "high"
+      },
+      {
+        "category": "Summary",
+        "message": "Add a 2-3 line professional summary at the top.",
+        "impact": "high"
+      },
+      {
+        "category": "Experience",
+        "message": "Add internships or work experience. Even personal projects count.",
+        "impact": "medium"
+      },
+      {
+        "category": "Keywords",
+        "message": "Consider adding relevant skills: react, node.js, aws, docker.",
+        "impact": "medium"
+      },
+      {
+        "category": "Overall",
+        "message": "Good start! Add more keywords and quantify your achievements.",
+        "impact": "medium"
+      }
+    ],
+    "keywords": {
+      "found": [
+        "python",
+        "java",
+        "go",
+        "mysql",
+        "git",
+        "github",
+        "html"
+      ],
+      "missing": [
+        "javascript",
+        "typescript",
+        "c++",
+        "c#",
+        "rust",
+        "php",
+        "ruby",
+        "react",
+        "angular",
+        "vue"
+      ]
+    },
+    "sections": {
+      "hasContact": true,
+      "hasEducation": true,
+      "hasExperience": false,
+      "hasSkills": true,
+      "hasProjects": true,
+      "hasSummary": false
+    },
+    "isAnalyzed": true,
+    "createdAt": "2026-05-02T10:21:52.308Z",
+    "updatedAt": "2026-05-02T10:21:52.308Z"
+  },
+  {
+    "_id": "7b5c5a79207fa95b54509722",
+    "userId": "0d0c64935139e16fd2926eda",
+    "fileName": "P.V_Sai_Shreyas_FlowCV_Resume_2026-05-01.pdf",
+    "fileType": "pdf",
+    "filePath": "undefined_1777718945560.pdf",
+    "rawText": "\n\nP.V Sai Shreyas\npvsaishreyas2005 @gmail.com\nBanglore KA\nGitHub \n8050111781\nLinkdin\nEducation\nSAI VIDYA INSTITUTE OF TECHNOLOGY Bangalore, KA \nBachelor of Engineering in Information Science and Engineering                                    Expected: October  2027\nProjects\nDentAge AI - Dental Age Estimator \nDentAge AI is a full-stack web app that simulates dental age estimation from panoramic X-ray images, \nfeaturing an animated interface, real-time analysis, and downloadable PDF reports.\nInfoSphere\nInfoSphere is an AI-powered news aggregation platform with a cyberpunk design that delivers real-time, \nverified news tailored to your location and interests, while enabling secure citizen journalism.\nBuild Code Sensei                                                                                                                                                               On Going\nAn  AI-powered  code  review  platform  offering  real-time,  multi-language  analysis  with  explainable\nsuggestions and automated fixes, replacing manual reviews with instant, actionable mentoring.\nCertificates\nEssentials Automation \nProfessional by Automation \nAnywhere\nMY Bharath Budget Quest \n2026\nThe Bits and Bytes Of \nComputer Network By Google\nGoogle Cloud Data Analytics- \nOn Going\nViksit Bharat Young Leaders \nDialogue (VBYLD)\nTechnical Skills\nProgramming:Python, C, HTML,JAVA.                    Tools: Git/ GitHub, Jupyter, VS Code.\nPlatforms:Windows,Ubuntu.                                       Databases:MySQL.\nActivities\nNATIONAL SERVICE SCHEME (NSS) \nSai Vidya Institute of Technology                                                                                                                              Banglore,KA \nActive Volunteer – Present\nSAI VIDYA INSTITUE OF TECHNOLOGY Icons Club                                                                                          Banglore,KA\nPhotography Head – Present                                                                                                                                                     \nAdditional information\nLanguages: English, Telugu, Hindi, Kannada\nInterests: AI-Powered Education, AI-Assisted Developments",
+    "score": 65,
+    "suggestions": [
+      {
+        "category": "Contact",
+        "message": "Add your LinkedIn profile URL to increase visibility.",
+        "impact": "high"
+      },
+      {
+        "category": "Summary",
+        "message": "Add a 2-3 line professional summary at the top.",
+        "impact": "high"
+      },
+      {
+        "category": "Experience",
+        "message": "Add internships or work experience. Even personal projects count.",
+        "impact": "medium"
+      },
+      {
+        "category": "Keywords",
+        "message": "Consider adding relevant skills: react, node.js, aws, docker.",
+        "impact": "medium"
+      },
+      {
+        "category": "Overall",
+        "message": "Good start! Add more keywords and quantify your achievements.",
+        "impact": "medium"
+      }
+    ],
+    "keywords": {
+      "found": [
+        "python",
+        "java",
+        "go",
+        "mysql",
+        "git",
+        "github",
+        "html"
+      ],
+      "missing": [
+        "javascript",
+        "typescript",
+        "c++",
+        "c#",
+        "rust",
+        "php",
+        "ruby",
+        "react",
+        "angular",
+        "vue"
+      ]
+    },
+    "sections": {
+      "hasContact": true,
+      "hasEducation": true,
+      "hasExperience": false,
+      "hasSkills": true,
+      "hasProjects": true,
+      "hasSummary": false
+    },
+    "isAnalyzed": true,
+    "createdAt": "2026-05-02T10:49:05.688Z",
+    "updatedAt": "2026-05-02T10:49:05.688Z"
+  },
+  {
+    "_id": "7d05d75ab0550fa3832e90cc",
+    "userId": "2bcd04a32ff75459394f6747",
+    "fileName": "sarah_resume.txt",
+    "fileType": "txt",
+    "filePath": "undefined_1777719573166.txt",
+    "rawText": "﻿Sarah Johnson\nEmail: sarah.johnson@gmail.com\nPhone: +1-555-0123\nLinkedIn: linkedin.com/in/sarahjohnson\nGitHub: github.com/sarahj\n\nSummary\nFull stack developer with 3 years of experience building scalable web applications using React, Node.js, and cloud technologies.\n\nSkills\nJavaScript, TypeScript, React, Next.js, Node.js, Express, Python, MongoDB, PostgreSQL, Docker, AWS, Git, REST API, GraphQL, Tailwind CSS\n\nExperience\nSoftware Engineer at TechCorp (2023-2025)\n- Built microservices handling 50k daily requests\n- Led frontend migration from Angular to React\n- Implemented CI/CD pipelines using GitHub Actions\n\nJunior Developer at StartupXYZ (2022-2023)\n- Developed REST APIs with Node.js and Express\n- Built responsive UIs with React and Tailwind\n\nProjects\nCloudDash - Real-time Analytics Dashboard\nBuilt a real-time dashboard using React, D3.js, and WebSockets for monitoring cloud infrastructure metrics.\n\nEcoTracker - Carbon Footprint Calculator\nFull-stack app using Next.js and MongoDB that helps users track and reduce their carbon footprint.\n\nShopFlow - E-Commerce Platform\nScalable e-commerce platform with Stripe payments, built with React, Node.js, and PostgreSQL.\n\nEducation\nB.Tech Computer Science, Stanford University, 2022\nGPA: 3.8/4.0\n\nCertifications\nAWS Certified Solutions Architect\nGoogle Cloud Professional Developer\nMeta Frontend Developer Certificate\r\n",
+    "score": 90,
+    "suggestions": [
+      {
+        "category": "Formatting",
+        "message": "Resume is too short. Aim for 400-600 words.",
+        "impact": "high"
+      },
+      {
+        "category": "Overall",
+        "message": "Strong resume! Consider adding certifications or open source contributions.",
+        "impact": "low"
+      }
+    ],
+    "keywords": {
+      "found": [
+        "javascript",
+        "typescript",
+        "python",
+        "java",
+        "go",
+        "react",
+        "angular",
+        "next.js",
+        "node.js",
+        "express",
+        "mongodb",
+        "postgresql",
+        "aws",
+        "docker",
+        "ci/cd",
+        "git",
+        "github",
+        "rest api",
+        "graphql",
+        "microservices",
+        "css",
+        "tailwind"
+      ],
+      "missing": [
+        "c++",
+        "c#",
+        "rust",
+        "php",
+        "ruby",
+        "vue",
+        "django",
+        "flask",
+        "spring",
+        "mysql"
+      ]
+    },
+    "sections": {
+      "hasContact": true,
+      "hasEducation": true,
+      "hasExperience": true,
+      "hasSkills": true,
+      "hasProjects": true,
+      "hasSummary": true
+    },
+    "isAnalyzed": true,
+    "createdAt": "2026-05-02T10:59:33.173Z",
+    "updatedAt": "2026-05-02T10:59:33.173Z"
+  },
+  {
+    "_id": "c6f1f3a5a9e64172d8010a5a",
+    "userId": "0d0c64935139e16fd2926eda",
+    "fileName": "P.V_Sai_Shreyas_FlowCV_Resume_2026-05-01.pdf",
+    "fileType": "pdf",
+    "filePath": "undefined_1777719805965.pdf",
+    "rawText": "\n\nP.V Sai Shreyas\npvsaishreyas2005 @gmail.com\nBanglore KA\nGitHub \n8050111781\nLinkdin\nEducation\nSAI VIDYA INSTITUTE OF TECHNOLOGY Bangalore, KA \nBachelor of Engineering in Information Science and Engineering                                    Expected: October  2027\nProjects\nDentAge AI - Dental Age Estimator \nDentAge AI is a full-stack web app that simulates dental age estimation from panoramic X-ray images, \nfeaturing an animated interface, real-time analysis, and downloadable PDF reports.\nInfoSphere\nInfoSphere is an AI-powered news aggregation platform with a cyberpunk design that delivers real-time, \nverified news tailored to your location and interests, while enabling secure citizen journalism.\nBuild Code Sensei                                                                                                                                                               On Going\nAn  AI-powered  code  review  platform  offering  real-time,  multi-language  analysis  with  explainable\nsuggestions and automated fixes, replacing manual reviews with instant, actionable mentoring.\nCertificates\nEssentials Automation \nProfessional by Automation \nAnywhere\nMY Bharath Budget Quest \n2026\nThe Bits and Bytes Of \nComputer Network By Google\nGoogle Cloud Data Analytics- \nOn Going\nViksit Bharat Young Leaders \nDialogue (VBYLD)\nTechnical Skills\nProgramming:Python, C, HTML,JAVA.                    Tools: Git/ GitHub, Jupyter, VS Code.\nPlatforms:Windows,Ubuntu.                                       Databases:MySQL.\nActivities\nNATIONAL SERVICE SCHEME (NSS) \nSai Vidya Institute of Technology                                                                                                                              Banglore,KA \nActive Volunteer – Present\nSAI VIDYA INSTITUE OF TECHNOLOGY Icons Club                                                                                          Banglore,KA\nPhotography Head – Present                                                                                                                                                     \nAdditional information\nLanguages: English, Telugu, Hindi, Kannada\nInterests: AI-Powered Education, AI-Assisted Developments",
+    "score": 65,
+    "suggestions": [
+      {
+        "category": "Contact",
+        "message": "Add your LinkedIn profile URL to increase visibility.",
+        "impact": "high"
+      },
+      {
+        "category": "Summary",
+        "message": "Add a 2-3 line professional summary at the top.",
+        "impact": "high"
+      },
+      {
+        "category": "Experience",
+        "message": "Add internships or work experience. Even personal projects count.",
+        "impact": "medium"
+      },
+      {
+        "category": "Keywords",
+        "message": "Consider adding relevant skills: react, node.js, aws, docker.",
+        "impact": "medium"
+      },
+      {
+        "category": "Overall",
+        "message": "Good start! Add more keywords and quantify your achievements.",
+        "impact": "medium"
+      }
+    ],
+    "keywords": {
+      "found": [
+        "python",
+        "java",
+        "go",
+        "mysql",
+        "git",
+        "github",
+        "html"
+      ],
+      "missing": [
+        "javascript",
+        "typescript",
+        "c++",
+        "c#",
+        "rust",
+        "php",
+        "ruby",
+        "react",
+        "angular",
+        "vue"
+      ]
+    },
+    "sections": {
+      "hasContact": true,
+      "hasEducation": true,
+      "hasExperience": false,
+      "hasSkills": true,
+      "hasProjects": true,
+      "hasSummary": false
+    },
+    "isAnalyzed": true,
+    "createdAt": "2026-05-02T11:03:26.081Z",
+    "updatedAt": "2026-05-02T11:03:26.081Z"
+  }
+]

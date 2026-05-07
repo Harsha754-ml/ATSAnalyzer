@@ -1,0 +1,114 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+@import "tailwindcss";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+  --color-primary: #3b82f6;
+}
+
+/* ── CSS variables ───────────────────────────────────────────────────────────── */
+:root {
+  --background: 0 0% 100%;
+  --foreground: 222 47% 11%;
+  --muted: 210 40% 96%;
+  --muted-foreground: 215 16% 47%;
+  --primary: 217 91% 60%;
+  --primary-foreground: 0 0% 100%;
+  --destructive: 0 84% 60%;
+  --destructive-foreground: 0 0% 100%;
+  --border: 214 32% 91%;
+  --ring: 217 91% 60%;
+  --card: 0 0% 100%;
+  --card-foreground: 222 47% 11%;
+}
+
+.dark {
+  --background: 222 47% 6%;
+  --foreground: 210 40% 98%;
+  --muted: 217 33% 17%;
+  --muted-foreground: 215 20% 65%;
+  --primary: 217 91% 60%;
+  --primary-foreground: 0 0% 100%;
+  --destructive: 0 63% 55%;
+  --destructive-foreground: 0 0% 100%;
+  --border: 217 33% 20%;
+  --ring: 217 91% 60%;
+  --card: 222 47% 9%;
+  --card-foreground: 210 40% 98%;
+}
+
+/* ── Base ────────────────────────────────────────────────────────────────────── */
+@layer base {
+  html {
+    background-color: #ffffff;
+    transition: background-color 0.3s ease, color 0.3s ease;
+  }
+
+  html.dark {
+    background-color: #0d1117;
+    color: #f1f5f9;
+  }
+
+  body {
+    @apply bg-white text-slate-900 font-sans selection:bg-blue-500/20 selection:text-blue-700 antialiased m-0 p-0 transition-colors duration-300;
+  }
+
+  html.dark body {
+    background-color: #0d1117;
+    color: #f1f5f9;
+  }
+}
+
+/* ── Utilities ───────────────────────────────────────────────────────────────── */
+@layer utilities {
+  .saas-card {
+    @apply bg-white border border-slate-200 rounded-3xl shadow-sm hover:shadow-md hover:-translate-y-1 transition-all duration-300;
+  }
+
+  .dark .saas-card {
+    background-color: #0f172a;
+    border-color: rgba(51, 65, 85, 0.6);
+  }
+
+  .glass-header {
+    @apply bg-white/80 backdrop-blur-md border-b border-slate-200;
+  }
+
+  .dark .glass-header {
+    background-color: rgba(2, 6, 23, 0.85);
+    border-color: #1e293b;
+  }
+
+  .btn-primary {
+    @apply px-8 py-4 bg-blue-600 text-white font-bold rounded-2xl hover:bg-blue-500 transition-all active:scale-95 flex items-center justify-center gap-3 shadow-md shadow-blue-200;
+  }
+
+  .btn-secondary {
+    @apply px-8 py-4 bg-slate-100 text-slate-800 font-bold rounded-2xl border border-slate-200 hover:bg-slate-200 transition-all active:scale-95 flex items-center justify-center gap-3;
+  }
+
+  .dark .btn-secondary {
+    background-color: #1e293b;
+    color: #f1f5f9;
+    border-color: #334155;
+  }
+
+  .section-padding {
+    @apply py-24 md:py-32 px-8 flex flex-col items-center;
+  }
+
+  .text-gradient {
+    @apply bg-clip-text text-transparent bg-gradient-to-r from-blue-600 via-blue-400 to-blue-600;
+    background-size: 200% auto;
+    animation: gradient 5s ease infinite;
+  }
+
+  @keyframes gradient {
+    0%   { background-position: 0% 50%; }
+    50%  { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+  }
+}

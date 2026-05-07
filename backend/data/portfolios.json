@@ -1,0 +1,292 @@
+[
+  {
+    "_id": "8b6f8344f94be531b6d5e912",
+    "userId": "0d0c64935139e16fd2926eda",
+    "resumeId": "c6f1f3a5a9e64172d8010a5a",
+    "name": "P.V Sai Shreyas",
+    "email": "guest_1777697257950_j7c5ht@resumeai.local",
+    "phone": "8050111781",
+    "summary": "",
+    "skills": [
+      "python",
+      "java",
+      "go",
+      "mysql",
+      "git",
+      "github",
+      "html"
+    ],
+    "projects": [
+      {
+        "name": "DentAge AI - Dental Age Estimator",
+        "description": "DentAge AI is a full-stack web app that simulates dental age estimation from panoramic X-ray images,",
+        "techStack": []
+      },
+      {
+        "name": "featuring an animated interface, real-time analysis, and dow",
+        "description": "InfoSphere",
+        "techStack": []
+      },
+      {
+        "name": "InfoSphere is an AI-powered news aggregation platform with a",
+        "description": "verified news tailored to your location and interests, while enabling secure citizen journalism.",
+        "techStack": []
+      },
+      {
+        "name": "An  AI-powered  code  review  platform  offering  real-time,",
+        "description": "suggestions and automated fixes, replacing manual reviews with instant, actionable mentoring.",
+        "techStack": []
+      },
+      {
+        "name": "Certificates",
+        "description": "Essentials Automation",
+        "techStack": []
+      },
+      {
+        "name": "Professional by Automation",
+        "description": "Anywhere",
+        "techStack": []
+      }
+    ],
+    "education": [
+      {
+        "institution": "SAI VIDYA INSTITUTE OF TECHNOLOGY Bangalore, KA",
+        "degree": "",
+        "field": "",
+        "year": ""
+      },
+      {
+        "institution": "Bachelor of Engineering in Information Science and Engineering                                    Expected: October  2027",
+        "degree": "",
+        "field": "",
+        "year": ""
+      }
+    ],
+    "experience": [],
+    "createdAt": "2026-05-02T04:47:45.979Z",
+    "updatedAt": "2026-05-02T11:03:26.083Z"
+  },
+  {
+    "_id": "b2fd16a8220da366fd5c955b",
+    "userId": "089969e6ccdb1f3aa2eb8474",
+    "resumeId": "e66ce3b907d2e8e95dfb6d49",
+    "name": "John Doe",
+    "email": "john@example.com",
+    "phone": "+1234567890",
+    "summary": "Experienced full stack developer with 3 years of experience in React, Node.js, and MongoDB.",
+    "skills": [
+      "javascript",
+      "typescript",
+      "java",
+      "go",
+      "react",
+      "node.js",
+      "express",
+      "mongodb",
+      "postgresql",
+      "aws",
+      "docker",
+      "git",
+      "github",
+      "rest api",
+      "microservices"
+    ],
+    "projects": [
+      {
+        "name": "Portfolio Builder",
+        "description": "Built a full-stack portfolio generator using React and Node.js with AI-powered analysis.",
+        "techStack": [
+          "react",
+          "node.js"
+        ]
+      },
+      {
+        "name": "E-Commerce Platform",
+        "description": "Developed a scalable e-commerce platform with payment integration using Stripe.",
+        "techStack": []
+      }
+    ],
+    "education": [
+      {
+        "institution": "B.Tech Computer Science, MIT University, 2023",
+        "degree": "",
+        "field": "",
+        "year": ""
+      }
+    ],
+    "experience": [
+      {
+        "company": "Software Engineer at TechCorp (2023-2025)",
+        "role": "- Built REST APIs serving 10k requests/day",
+        "duration": "",
+        "highlights": []
+      },
+      {
+        "company": "- Led migration from monolith to microservices",
+        "role": "Projects",
+        "duration": "",
+        "highlights": []
+      },
+      {
+        "company": "Portfolio Builder",
+        "role": "Built a full-stack portfolio generator using React and Node.js with AI-powered analysis.",
+        "duration": "",
+        "highlights": []
+      },
+      {
+        "company": "E-Commerce Platform",
+        "role": "Developed a scalable e-commerce platform with payment integration using Stripe.",
+        "duration": "",
+        "highlights": []
+      }
+    ],
+    "createdAt": "2026-05-02T05:03:52.998Z",
+    "updatedAt": "2026-05-02T05:03:52.999Z"
+  },
+  {
+    "_id": "fee88a6bf08fd543d8495b79",
+    "userId": "1f0e6cd7e2b01421fa93b407",
+    "resumeId": "96af54f67ae5d4fb822ab883",
+    "name": "John Doe",
+    "email": "john@example.com",
+    "phone": "",
+    "summary": "Full stack developer with experience in React and Node.js.",
+    "skills": [
+      "javascript",
+      "python",
+      "java",
+      "go",
+      "react",
+      "node.js",
+      "express",
+      "mongodb",
+      "aws",
+      "docker",
+      "git",
+      "github"
+    ],
+    "projects": [
+      {
+        "name": "Portfolio Builder",
+        "description": "Built a portfolio generator using React and Express.",
+        "techStack": [
+          "react",
+          "express"
+        ]
+      }
+    ],
+    "education": [
+      {
+        "institution": "B.Tech Computer Science, 2023",
+        "degree": "",
+        "field": "",
+        "year": ""
+      }
+    ],
+    "experience": [],
+    "createdAt": "2026-05-02T05:06:19.312Z",
+    "updatedAt": "2026-05-02T05:06:19.312Z"
+  },
+  {
+    "_id": "038026a5cd25345295ac3230",
+    "userId": "2bcd04a32ff75459394f6747",
+    "resumeId": "7d05d75ab0550fa3832e90cc",
+    "name": "Sarah Johnson",
+    "email": "sarah.johnson@gmail.com",
+    "phone": "+1-555-0123",
+    "summary": "Full stack developer with 3 years of experience building scalable web applications using React, Node.js, and cloud technologies.",
+    "skills": [
+      "javascript",
+      "typescript",
+      "python",
+      "java",
+      "go",
+      "react",
+      "angular",
+      "next.js",
+      "node.js",
+      "express",
+      "mongodb",
+      "postgresql",
+      "aws",
+      "docker",
+      "ci/cd",
+      "git",
+      "github",
+      "rest api",
+      "graphql",
+      "microservices",
+      "css",
+      "tailwind"
+    ],
+    "projects": [
+      {
+        "name": "CloudDash - Real-time Analytics Dashboard",
+        "description": "Built a real-time dashboard using React, D3.js, and WebSockets for monitoring cloud infrastructure metrics.",
+        "techStack": [
+          "react"
+        ]
+      },
+      {
+        "name": "EcoTracker - Carbon Footprint Calculator",
+        "description": "Full-stack app using Next.js and MongoDB that helps users track and reduce their carbon footprint.",
+        "techStack": [
+          "go",
+          "next.js",
+          "mongodb"
+        ]
+      },
+      {
+        "name": "ShopFlow - E-Commerce Platform",
+        "description": "Scalable e-commerce platform with Stripe payments, built with React, Node.js, and PostgreSQL.",
+        "techStack": [
+          "react",
+          "node.js",
+          "postgresql"
+        ]
+      }
+    ],
+    "education": [
+      {
+        "institution": "B.Tech Computer Science, Stanford University, 2022",
+        "degree": "",
+        "field": "",
+        "year": ""
+      },
+      {
+        "institution": "GPA: 3.8/4.0",
+        "degree": "",
+        "field": "",
+        "year": ""
+      }
+    ],
+    "experience": [
+      {
+        "company": "Software Engineer at TechCorp (2023-2025)",
+        "role": "- Built microservices handling 50k daily requests",
+        "duration": "",
+        "highlights": []
+      },
+      {
+        "company": "- Led frontend migration from Angular to React",
+        "role": "- Implemented CI/CD pipelines using GitHub Actions",
+        "duration": "",
+        "highlights": []
+      },
+      {
+        "company": "Junior Developer at StartupXYZ (2022-2023)",
+        "role": "- Developed REST APIs with Node.js and Express",
+        "duration": "",
+        "highlights": []
+      },
+      {
+        "company": "- Built responsive UIs with React and Tailwind",
+        "role": "Projects",
+        "duration": "",
+        "highlights": []
+      }
+    ],
+    "createdAt": "2026-05-02T10:59:33.176Z",
+    "updatedAt": "2026-05-02T10:59:33.176Z"
+  }
+]

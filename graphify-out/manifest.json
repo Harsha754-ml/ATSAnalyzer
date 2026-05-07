@@ -1,0 +1,186 @@
+{
+  "C:\\Users\\Harsha\\Downloads\\resume project\\resume project\\vite.config.ts": {
+    "mtime": 1777817825.6051025,
+    "hash": "88f2a6cd22d722635791d84901555a6f"
+  },
+  "C:\\Users\\Harsha\\Downloads\\resume project\\resume project\\backend\\server.js": {
+    "mtime": 1778088546.8180852,
+    "hash": "5c6a76735edf4de47a817fcc9af715d4"
+  },
+  "C:\\Users\\Harsha\\Downloads\\resume project\\resume project\\backend\\controllers\\auth.controller.js": {
+    "mtime": 1777817825.6671028,
+    "hash": "a52210bdd7f4f4bda55db7eadd76f45d"
+  },
+  "C:\\Users\\Harsha\\Downloads\\resume project\\resume project\\backend\\controllers\\portfolio.controller.js": {
+    "mtime": 1777817825.672121,
+    "hash": "8d380b6a78a65b7b90a04afd14eeab45"
+  },
+  "C:\\Users\\Harsha\\Downloads\\resume project\\resume project\\backend\\controllers\\resume.controller.js": {
+    "mtime": 1777817825.6781414,
+    "hash": "4665e02ed8c52729fa5980bd55307c7e"
+  },
+  "C:\\Users\\Harsha\\Downloads\\resume project\\resume project\\backend\\middleware\\auth.middleware.js": {
+    "mtime": 1777817825.7178328,
+    "hash": "588c29e730af6d5f7993e58bd7843fcb"
+  },
+  "C:\\Users\\Harsha\\Downloads\\resume project\\resume project\\backend\\middleware\\error.middleware.js": {
+    "mtime": 1777817825.7223718,
+    "hash": "b42d01a3e434882200e4af18b9db17ef"
+  },
+  "C:\\Users\\Harsha\\Downloads\\resume project\\resume project\\backend\\middleware\\upload.middleware.js": {
+    "mtime": 1777817825.7258835,
+    "hash": "59fb672051e1382d944e4168bc8aca6d"
+  },
+  "C:\\Users\\Harsha\\Downloads\\resume project\\resume project\\backend\\models\\Portfolio.model.js": {
+    "mtime": 1777817825.7374618,
+    "hash": "d181dacdd8e03c3044aa6691b37cc9fb"
+  },
+  "C:\\Users\\Harsha\\Downloads\\resume project\\resume project\\backend\\models\\Resume.model.js": {
+    "mtime": 1777817825.7414725,
+    "hash": "2691adb5eea8345e254512b035527400"
+  },
+  "C:\\Users\\Harsha\\Downloads\\resume project\\resume project\\backend\\models\\User.model.js": {
+    "mtime": 1777817825.7454956,
+    "hash": "ff25f0c665107305e888d8d22f2fffed"
+  },
+  "C:\\Users\\Harsha\\Downloads\\resume project\\resume project\\backend\\routes\\auth.routes.js": {
+    "mtime": 1777817831.5225906,
+    "hash": "d8838bd3357c93279526a9bf5d1659be"
+  },
+  "C:\\Users\\Harsha\\Downloads\\resume project\\resume project\\backend\\routes\\portfolio.routes.js": {
+    "mtime": 1777817831.5337224,
+    "hash": "feee5fe997c8b45e7c98ab2ef20968ad"
+  },
+  "C:\\Users\\Harsha\\Downloads\\resume project\\resume project\\backend\\routes\\resume.routes.js": {
+    "mtime": 1777817831.5337224,
+    "hash": "cbfe4c49d191b2baf97516338736a3b1"
+  },
+  "C:\\Users\\Harsha\\Downloads\\resume project\\resume project\\backend\\tests\\api.test.js": {
+    "mtime": 1777817831.5462596,
+    "hash": "13e0f082632f3227a8720089a7c40cdd"
+  },
+  "C:\\Users\\Harsha\\Downloads\\resume project\\resume project\\backend\\utils\\jsonDb.js": {
+    "mtime": 1777817831.667464,
+    "hash": "335200a0213136f375fe76351640f1a1"
+  },
+  "C:\\Users\\Harsha\\Downloads\\resume project\\resume project\\backend\\utils\\jwt.js": {
+    "mtime": 1777817831.6720667,
+    "hash": "a2bcba95fd826290e7045435f2ad2599"
+  },
+  "C:\\Users\\Harsha\\Downloads\\resume project\\resume project\\backend\\utils\\resumeAnalyzer.js": {
+    "mtime": 1777817831.6720667,
+    "hash": "4b555b3cdf658047ab96cb044f12c623"
+  },
+  "C:\\Users\\Harsha\\Downloads\\resume project\\resume project\\components\\ui\\material-design-3-switch.tsx": {
+    "mtime": 1778089167.202065,
+    "hash": "c3ac77ceadac846faa42d862c5a73fa9"
+  },
+  "C:\\Users\\Harsha\\Downloads\\resume project\\resume project\\lib\\utils.ts": {
+    "mtime": 1777817831.72391,
+    "hash": "b36b4471fa392f7fd52db5d67e6d22e8"
+  },
+  "C:\\Users\\Harsha\\Downloads\\resume project\\resume project\\src\\App.tsx": {
+    "mtime": 1778089031.710718,
+    "hash": "6f2daa895c5fcaa46aacfea6a52e3cd0"
+  },
+  "C:\\Users\\Harsha\\Downloads\\resume project\\resume project\\src\\main.tsx": {
+    "mtime": 1777817932.0735586,
+    "hash": "5909115dd305ea0d6c7598859d4d9db1"
+  },
+  "C:\\Users\\Harsha\\Downloads\\resume project\\resume project\\src\\components\\AnalysisView.tsx": {
+    "mtime": 1778089074.6442149,
+    "hash": "c398aa1ed86c764a95683f2007f2c3cd"
+  },
+  "C:\\Users\\Harsha\\Downloads\\resume project\\resume project\\src\\components\\AnimationLayer.tsx": {
+    "mtime": 1777817932.1006956,
+    "hash": "7c9fcb66f3e96010d08620313318d1b9"
+  },
+  "C:\\Users\\Harsha\\Downloads\\resume project\\resume project\\src\\components\\Scene3D.tsx": {
+    "mtime": 1777817932.1052885,
+    "hash": "2fdea6d1fbc158f2d0c37fc771cebd79"
+  },
+  "C:\\Users\\Harsha\\Downloads\\resume project\\resume project\\src\\components\\ThreeBackground.tsx": {
+    "mtime": 1777817932.1052885,
+    "hash": "8e34a7b227813acf2907e95081728e58"
+  },
+  "C:\\Users\\Harsha\\Downloads\\resume project\\resume project\\src\\context\\ThemeContext.tsx": {
+    "mtime": 1777817932.127166,
+    "hash": "47f0e463d43b9d2880f1d4c88bd22c41"
+  },
+  "C:\\Users\\Harsha\\Downloads\\resume project\\resume project\\src\\lib\\utils.ts": {
+    "mtime": 1777817932.1368177,
+    "hash": "b36b4471fa392f7fd52db5d67e6d22e8"
+  },
+  "C:\\Users\\Harsha\\Downloads\\resume project\\resume project\\src\\services\\geminiService.ts": {
+    "mtime": 1778088565.2593985,
+    "hash": "9baf3211c9563df5199af37e4d4601b0"
+  },
+  "C:\\Users\\Harsha\\Downloads\\resume project\\resume project\\index.html": {
+    "mtime": 1777817825.5618546,
+    "hash": "4d7cf53eff33153558b90aa748f832e5"
+  },
+  "C:\\Users\\Harsha\\Downloads\\resume project\\resume project\\README.md": {
+    "mtime": 1778088934.1574168,
+    "hash": "a97331b116f5adb036bbfb911679b4cc"
+  },
+  "C:\\Users\\Harsha\\Downloads\\resume project\\resume project\\backend\\README.md": {
+    "mtime": 1777817825.6560473,
+    "hash": "83a6eade1cd09b8b8879492170b28fb0"
+  },
+  "C:\\Users\\Harsha\\Downloads\\resume project\\resume project\\backend\\uploads\\undefined_1777698232847.txt": {
+    "mtime": 1777817831.5936115,
+    "hash": "cc018b9a8333579a9c896309a6bc1cf3"
+  },
+  "C:\\Users\\Harsha\\Downloads\\resume project\\resume project\\backend\\uploads\\undefined_1777698379298.txt": {
+    "mtime": 1777817831.5946605,
+    "hash": "de6c2568ff4a5608d9236edc7d54b098"
+  },
+  "C:\\Users\\Harsha\\Downloads\\resume project\\resume project\\backend\\uploads\\undefined_1777719573166.txt": {
+    "mtime": 1777817831.651794,
+    "hash": "5900e641b9a20bbc2c4110e5b06ec5d3"
+  },
+  "C:\\Users\\Harsha\\Downloads\\resume project\\resume project\\backend\\uploads\\undefined_1777697258461.pdf": {
+    "mtime": 1777817831.5559752,
+    "hash": "d9277a5485f3f1737963366451a74cf7"
+  },
+  "C:\\Users\\Harsha\\Downloads\\resume project\\resume project\\backend\\uploads\\undefined_1777697265798.pdf": {
+    "mtime": 1777817831.5672476,
+    "hash": "d9277a5485f3f1737963366451a74cf7"
+  },
+  "C:\\Users\\Harsha\\Downloads\\resume project\\resume project\\backend\\uploads\\undefined_1777697282978.pdf": {
+    "mtime": 1777817831.5672476,
+    "hash": "d9277a5485f3f1737963366451a74cf7"
+  },
+  "C:\\Users\\Harsha\\Downloads\\resume project\\resume project\\backend\\uploads\\undefined_1777697316627.pdf": {
+    "mtime": 1777817831.5859933,
+    "hash": "d9277a5485f3f1737963366451a74cf7"
+  },
+  "C:\\Users\\Harsha\\Downloads\\resume project\\resume project\\backend\\uploads\\undefined_1777698616040.pdf": {
+    "mtime": 1777817831.5946605,
+    "hash": "d9277a5485f3f1737963366451a74cf7"
+  },
+  "C:\\Users\\Harsha\\Downloads\\resume project\\resume project\\backend\\uploads\\undefined_1777715870879.pdf": {
+    "mtime": 1777817831.6097112,
+    "hash": "d9277a5485f3f1737963366451a74cf7"
+  },
+  "C:\\Users\\Harsha\\Downloads\\resume project\\resume project\\backend\\uploads\\undefined_1777716029080.pdf": {
+    "mtime": 1777817831.6229322,
+    "hash": "d9277a5485f3f1737963366451a74cf7"
+  },
+  "C:\\Users\\Harsha\\Downloads\\resume project\\resume project\\backend\\uploads\\undefined_1777716204421.pdf": {
+    "mtime": 1777817831.624974,
+    "hash": "d9277a5485f3f1737963366451a74cf7"
+  },
+  "C:\\Users\\Harsha\\Downloads\\resume project\\resume project\\backend\\uploads\\undefined_1777717311503.pdf": {
+    "mtime": 1777817831.624974,
+    "hash": "d9277a5485f3f1737963366451a74cf7"
+  },
+  "C:\\Users\\Harsha\\Downloads\\resume project\\resume project\\backend\\uploads\\undefined_1777718945560.pdf": {
+    "mtime": 1777817831.6406586,
+    "hash": "d9277a5485f3f1737963366451a74cf7"
+  },
+  "C:\\Users\\Harsha\\Downloads\\resume project\\resume project\\backend\\uploads\\undefined_1777719805965.pdf": {
+    "mtime": 1777817831.656392,
+    "hash": "d9277a5485f3f1737963366451a74cf7"
+  }
+}

@@ -1,0 +1,50 @@
+[
+  {
+    "_id": "9975ebcb368e2cfd8cb2034c",
+    "name": "Test User",
+    "email": "test@example.com",
+    "password": "$2a$12$IKXxSlM.vcgQlfiXpFvilOC5DBhANcOS9J7dHXBH6SuB7DyuzPXgi",
+    "createdAt": "2026-05-02T03:29:24.079Z",
+    "updatedAt": "2026-05-02T03:29:24.079Z"
+  },
+  {
+    "_id": "0d0c64935139e16fd2926eda",
+    "name": "Guest User",
+    "email": "guest_1777697257950_j7c5ht@resumeai.local",
+    "password": "$2a$12$7VYf/mfclataALkSzRwd3eBXvkTXYuGUrwgTdhD2UcoCoRDSFaqyq",
+    "createdAt": "2026-05-02T04:47:38.435Z",
+    "updatedAt": "2026-05-02T04:47:38.435Z"
+  },
+  {
+    "_id": "f3de8d688f10e154dd2b9534",
+    "name": "debug",
+    "email": "debug103312@test.com",
+    "password": "$2a$12$VHAhbBgLjxq6ssyAuZ0wl.xEP.sUy9ppw.4FwnwcfD.7JWbAp1CcS",
+    "createdAt": "2026-05-02T05:03:14.683Z",
+    "updatedAt": "2026-05-02T05:03:14.684Z"
+  },
+  {
+    "_id": "089969e6ccdb1f3aa2eb8474",
+    "name": "test2",
+    "email": "test2103348@test.com",
+    "password": "$2a$12$ZTs4hu9k5TPNsZbcOIrEE.aCzFgU3zT1uv6AkPgekZYGmZizu9mmm",
+    "createdAt": "2026-05-02T05:03:49.838Z",
+    "updatedAt": "2026-05-02T05:03:49.838Z"
+  },
+  {
+    "_id": "1f0e6cd7e2b01421fa93b407",
+    "name": "e2e_test",
+    "email": "e2e_10361721@test.com",
+    "password": "$2a$12$GO7RBCVZY8NIwQhZr3sW3uQ/4g8cEu4dxDxHeGF4PnyA6tzprhqEO",
+    "createdAt": "2026-05-02T05:06:18.555Z",
+    "updatedAt": "2026-05-02T05:06:18.556Z"
+  },
+  {
+    "_id": "2bcd04a32ff75459394f6747",
+    "name": "E2E Test",
+    "email": "e2e_16293047@test.com",
+    "password": "$2a$12$658MR/hi/Q2AI7p0uuXp9eE7z2f9ceLsBUEbCNiXCcz9it6o6mony",
+    "createdAt": "2026-05-02T10:59:32.288Z",
+    "updatedAt": "2026-05-02T10:59:32.288Z"
+  }
+]

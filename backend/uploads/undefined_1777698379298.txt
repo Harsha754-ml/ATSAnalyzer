@@ -1,0 +1,16 @@
+﻿John Doe
+Email: john@example.com
+GitHub: github.com/johndoe
+
+Summary
+Full stack developer with experience in React and Node.js.
+
+Skills
+JavaScript, React, Node.js, MongoDB, Docker, Git, AWS, Python
+
+Projects
+Portfolio Builder
+Built a portfolio generator using React and Express.
+
+Education
+B.Tech Computer Science, 2023
