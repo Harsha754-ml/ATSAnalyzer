@@ -27,6 +27,7 @@
 - [Project Structure](#project-structure)
 - [API Endpoints](#api-endpoints)
 - [Environment Variables](#environment-variables)
+- [Testing](#testing)
 - [Contributing](#contributing)
 - [License](#license)
 
@@ -73,7 +74,11 @@ The **ATS Resume Comparator System** is a full-stack web application that helps 
 | Technology | Purpose |
 |------------|---------|
 | Express.js | API Server |
+| MongoDB + Mongoose | Database |
+| JWT | Authentication |
+| bcryptjs | Password Hashing |
 | Multer | File Uploads |
+| pdf-parse | PDF Text Extraction |
 | CORS | Cross-Origin Support |
 
 ---
@@ -84,6 +89,7 @@ The **ATS Resume Comparator System** is a full-stack web application that helps 
 
 - **Node.js** (v18 or higher)
 - **npm** or **pnpm**
+- **MongoDB** (local or Atlas)
 
 ### Installation
 
@@ -93,26 +99,39 @@ The **ATS Resume Comparator System** is a full-stack web application that helps 
    cd resume-comparator
    ```
 
-2. **Install dependencies**
+2. **Install root dependencies**
    ```bash
    npm install
    ```
 
-3. **Set up environment variables**
+3. **Install backend dependencies**
+   ```bash
+   cd backend
+   npm install
+   cd ..
+   ```
+
+4. **Set up environment variables**
    ```bash
    cp .env.example .env
-   # Edit .env with your configuration (if needed)
+   # Edit .env with your MongoDB URI and JWT secret
    ```
 
 ### Running the Project
 
-1. **Start the backend server** (Terminal 1)
+1. **Start MongoDB** (if using local)
    ```bash
-   npm run dev:backend
-   # Backend runs on http://localhost:5001
+   mongod
    ```
 
-2. **Start the frontend** (Terminal 2)
+2. **Start the backend server** (Terminal 1)
+   ```bash
+   cd backend
+   npm run dev
+   # Backend runs on http://localhost:5000
+   ```
+
+3. **Start the frontend** (Terminal 2)
    ```bash
    npm run dev
    # Frontend runs on http://localhost:3000
@@ -140,11 +159,29 @@ resume-comparator/
 │   ├── main.tsx           # Entry point
 │   └── index.css          # Global styles
 ├── backend/               # Backend source
+│   ├── controllers/       # Route controllers
+│   │   ├── auth.controller.js
+│   │   ├── resume.controller.js
+│   │   └── portfolio.controller.js
+│   ├── middleware/        # Express middleware
+│   │   ├── auth.middleware.js
+│   │   ├── error.middleware.js
+│   │   └── upload.middleware.js
+│   ├── models/            # Mongoose models
+│   ├── routes/            # API routes
+│   │   ├── auth.routes.js
+│   │   ├── resume.routes.js
+│   │   └── portfolio.routes.js
+│   ├── utils/             # Utilities
+│   │   ├── resumeAnalyzer.js
+│   │   └── jwt.js
+│   ├── data/              # JSON database (dev)
+│   ├── tests/             # Test files
 │   ├── server.js          # Express server
-│   └── utils/             # Backend utilities
+│   └── package.json       # Dependencies
 ├── public/                # Static assets
 ├── dist/                  # Build output
-├── package.json           # Dependencies
+├── package.json           # Root dependencies
 ├── vite.config.ts         # Vite config
 ├── tsconfig.json          # TypeScript config
 └── tailwind.config.js     # Tailwind config
@@ -154,6 +191,32 @@ resume-comparator/
 
 ## API Endpoints
 
+### Auth
+| Method | Endpoint | Auth | Description |
+|--------|----------|------|-------------|
+| POST | `/api/auth/signup` | No | Register new user |
+| POST | `/api/auth/login` | No | Login, get JWT token |
+| GET | `/api/auth/me` | Yes | Get current user |
+| PUT | `/api/auth/update-profile` | Yes | Update name/avatar |
+
+### Resume
+| Method | Endpoint | Auth | Description |
+|--------|----------|------|-------------|
+| POST | `/api/resume/upload` | Yes | Upload PDF/TXT resume |
+| GET | `/api/resume/analyze` | Yes | Get latest resume analysis |
+| GET | `/api/resume/history` | Yes | Get all uploaded resumes |
+| DELETE | `/api/resume/:id` | Yes | Delete a resume |
+
+### Portfolio
+| Method | Endpoint | Auth | Description |
+|--------|----------|------|-------------|
+| GET | `/api/portfolio/me` | Yes | Get your portfolio |
+| GET | `/api/portfolio/:userId` | Yes | Get portfolio by user ID |
+| GET | `/api/portfolio/slug/:slug` | No | Get public portfolio by slug |
+| PUT | `/api/portfolio/update` | Yes | Update portfolio fields |
+| DELETE | `/api/portfolio` | Yes | Delete portfolio |
+
+### Legacy (No Auth)
 | Method | Endpoint | Description |
 |--------|----------|-------------|
 | `GET` | `/` | Health check |
@@ -166,9 +229,10 @@ resume-comparator/
 
 **File Upload:**
 ```
-POST /analyze-resume
+POST /api/resume/upload
 Content-Type: multipart/form-data
 Body: { resume: <file> }
+Authorization: Bearer <token>
 ```
 
 **Raw Text:**
@@ -201,11 +265,25 @@ Body: { text: "Resume content..." }
 Create a `.env` file in the root directory:
 
 ```env
-PORT=5001
+PORT=5000
+MONGO_URI=mongodb://localhost:27017/resume_analyzer
+JWT_SECRET=your_secret_key_here
+JWT_EXPIRES_IN=7d
+MAX_FILE_SIZE_MB=5
 GEMINI_API_KEY=your_api_key_here
 ```
 
-> Note: The backend works without API keys using local keyword analysis. Gemini integration is optional for advanced features.
+> Note: The backend works without API keys using local keyword analysis. Gemini integration is optional for advanced features. MongoDB is required - use local MongoDB or MongoDB Atlas.
+
+---
+
+## Testing
+
+Run backend tests:
+```bash
+cd backend
+npm test
+```
 
 ---
 
@@ -226,5 +304,5 @@ This project is licensed under the **MIT License** - see the [LICENSE](LICENSE) 
 ---
 
 <div align="center">
-  <sub>Built with React + Express + Tailwind + Three.js</sub>
+  <sub>Built with React + Express + MongoDB + Tailwind + Three.js</sub>
 </div>
