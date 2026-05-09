@@ -34,6 +34,10 @@ export interface AnalysisResult {
     content: string;
     matchScore: number;
   }[];
+  resumeFilePath?: string;
+  resumeFileName?: string;
+  annotations?: string[];
+  scribbleAnnotations?: string[];
 }
 
 interface StrictEngineResponse {

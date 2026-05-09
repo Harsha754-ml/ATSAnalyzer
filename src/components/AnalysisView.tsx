@@ -12,6 +12,7 @@ import {
   TrendingUp,
   Sparkles,
   Eye,
+  FileUp,
 } from 'lucide-react';
 import type { AnalysisResult } from '../services/geminiService';
 import ThreeBackground from './ThreeBackground';
@@ -19,9 +20,10 @@ import ThreeBackground from './ThreeBackground';
 interface Props {
   results: AnalysisResult;
   onBack: () => void;
+  onViewResume?: () => void;
 }
 
-export default function AnalysisView({ results, onBack }: Props) {
+export default function AnalysisView({ results, onBack, onViewResume }: Props) {
   const score = results.matchPercentage;
   const scoreColor = score >= 80 ? 'text-green-500' : score >= 60 ? 'text-amber-500' : 'text-red-500';
   const scoreStroke = score >= 80 ? 'stroke-green-500' : score >= 60 ? 'stroke-amber-500' : 'stroke-red-500';
@@ -104,6 +106,15 @@ export default function AnalysisView({ results, onBack }: Props) {
                       {missingSectionsCount} missing sections
                     </span>
                   </div>
+                )}
+                {onViewResume && (
+                  <button
+                    onClick={onViewResume}
+                    className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-full transition-colors"
+                  >
+                    <FileUp className="w-4 h-4" />
+                    <span className="text-sm font-bold">View Resume with Scribbles</span>
+                  </button>
                 )}
               </div>
             </div>

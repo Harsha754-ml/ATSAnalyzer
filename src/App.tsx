@@ -26,6 +26,7 @@ import {
 
 import AnalysisView from './components/AnalysisView';
 import TemplateGenerator from './components/TemplateGenerator';
+import ResumeViewer from './components/ResumeViewer';
 
 // â”€â”€â”€ Unsplash image sources (free, no API key) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 const IMAGES = {
@@ -456,6 +457,8 @@ export default function App() {
   const [isResumeDragging, setIsResumeDragging] = useState(false);
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [showTemplateGenerator, setShowTemplateGenerator] = useState(false);
+  const [showResumeViewer, setShowResumeViewer] = useState(false);
+  const [resumeFilePath, setResumeFilePath] = useState<string | null>(null);
   const [currentUser, setCurrentUser] = useState<AuthUser | null>(getCurrentUser());
   const [institutions, setInstitutions] = useState<Institution[]>([]);
   const [selectedInstitution, setSelectedInstitution] = useState('');
@@ -547,6 +550,13 @@ export default function App() {
     try {
       const result = await compareResume(file, selectedInstitution);
       setResults(result);
+      // Store file path for ResumeViewer
+      if (result.resumeFilePath) {
+        setResumeFilePath(result.resumeFilePath);
+      } else {
+        // Fallback: create object URL from file
+        setResumeFilePath(URL.createObjectURL(file));
+      }
       setView('report');
     } catch (err) {
       console.error('Resume compare error:', err);
@@ -558,7 +568,27 @@ export default function App() {
 
   // â”€â”€ Analysis Results View â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   if (view === 'report' && results) {
-    return <AnalysisView results={results} onBack={() => setView('home')} />;
+    return (
+      <>
+        <AnalysisView
+          results={results}
+          onBack={() => setView('home')}
+          onViewResume={() => setShowResumeViewer(true)}
+        />
+        <AnimatePresence>
+          {showResumeViewer && (
+            <ResumeViewer
+              filePath={resumeFilePath || ''}
+              fileName={results.resumeFileName || 'resume.pdf'}
+              annotations={(results as any).annotations || (results as any).scribbleAnnotations || []}
+              matchedKeywords={results.matchedKeywords}
+              missingKeywords={results.missingKeywords}
+              onClose={() => setShowResumeViewer(false)}
+            />
+          )}
+        </AnimatePresence>
+      </>
+    );
   }
 
   // â”€â”€ Home View â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€

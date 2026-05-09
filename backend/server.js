@@ -30,6 +30,9 @@ let db = loadData();
 app.use(cors());
 app.use(express.json());
 
+// Serve uploaded files for PDF rendering
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+
 // Create uploads directory
 const uploadDir = path.join(__dirname, 'uploads');
 if (!fs.existsSync(uploadDir)) {
@@ -1104,8 +1107,15 @@ app.post('/compare-resume', upload.single('resume'), async (req, res) => {
   const analysis = compareResume(text, effectiveTemplate.text, effectiveTemplate.config || requestConfig);
   debugInfo.result = analysis;
   console.log('DEBUG compare-result:', JSON.stringify(analysis, null, 2));
-  
-  return res.json(analysis);
+
+  // Return file path for PDF rendering if available
+  const response = {
+    ...analysis,
+    resumeFilePath: req.file?.path || null,
+    resumeFileName: req.file?.originalname || null,
+  };
+
+  return res.json(response);
 });
 
 app.post('/analyze-resume', upload.single('resume'), async (req, res) => {
