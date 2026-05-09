@@ -727,90 +727,209 @@ async function extractText(filePathOrBuffer, filename) {
   return null;
 }
 
-// Extract text positions from PDF for scribble annotations
-async function extractTextPositions(filePathOrBuffer, filename) {
-  try {
-    const fs = require('fs');
-    const pdfjsLib = require('pdfjs-dist/legacy/build/pdf.js');
+// ============================================================
+// TEXT POSITION EXTRACTION FOR SCRIBBLES
+// ============================================================
 
-    let dataBuffer;
-    if (typeof filePathOrBuffer === 'string' && fs.existsSync(filePathOrBuffer)) {
-      dataBuffer = fs.readFileSync(filePathOrBuffer);
-    } else if (Buffer.isBuffer(filePathOrBuffer)) {
-      dataBuffer = filePathOrBuffer;
+// Normalize text for comparison - remove spaces, lowercase, special chars
+function normalizeText(text) {
+  if (!text || typeof text !== 'string') return '';
+  return text
+    .toLowerCase()
+    .replace(/[\s\-_\.]+/g, '')  // Remove spaces, hyphens, underscores, dots
+    .replace(/[^\w]/g, '');     // Remove special characters
+}
+
+// Group text items into lines based on Y coordinate
+function groupItemsIntoLines(textItems, yTolerance = 5) {
+  const lines = [];
+
+  // Sort by Y then X for correct reading order
+  const sorted = [...textItems].sort((a, b) => {
+    const yDiff = Math.round(a.transform[5]) - Math.round(b.transform[5]);
+    if (yDiff !== 0) return yDiff;
+    return a.transform[4] - b.transform[4];
+  });
+
+  let currentLine = null;
+
+  for (const item of sorted) {
+    if (!item.str || item.str.trim() === '') continue;
+
+    const itemY = Math.round(item.transform[5]);
+
+    if (!currentLine) {
+      currentLine = { items: [], y: itemY };
+      lines.push(currentLine);
+    } else if (Math.abs(itemY - currentLine.y) > yTolerance) {
+      // New line
+      currentLine = { items: [], y: itemY };
+      lines.push(currentLine);
     }
 
-    if (!dataBuffer) return null;
+    currentLine.items.push(item);
+  }
 
-    const loadingTask = pdfjsLib.getDocument({ data: dataBuffer });
-    const pdf = await loadingTask.promise;
+  return lines;
+}
 
-    const textPositions = [];
+// Reconstruct full line text (raw and normalized)
+function reconstructLine(line) {
+  const sortedItems = [...line.items].sort((a, b) => a.transform[4] - b.transform[4]);
 
-    // Extract text from each page
+  const rawText = sortedItems.map(item => item.str).join(' ');
+  const normalizedText = normalizeText(rawText);
+
+  return {
+    raw: rawText,
+    normalized: normalizedText,
+    items: sortedItems,
+    y: line.y
+  };
+}
+
+// Match keywords at LINE level using substring matching
+function matchKeywordsInLines(lines, keywords) {
+  const matches = [];
+
+  for (const line of lines) {
+    const reconstructed = reconstructLine(line);
+
+    for (const keyword of keywords) {
+      const normalizedKeyword = normalizeText(keyword);
+
+      // Substring matching - keyword appears in line
+      if (reconstructed.normalized.includes(normalizedKeyword)) {
+        matches.push({
+          keyword,
+          lineIndex: lines.indexOf(line),
+          line: reconstructed
+        });
+      }
+    }
+  }
+
+  return matches;
+}
+
+// Compute bounding box from line items
+function computeBoundingBox(items) {
+  if (!items || items.length === 0) return { x: 0, y: 0, width: 0, height: 0 };
+
+  let minX = Infinity, maxX = -Infinity;
+  let minY = Infinity, maxY = -Infinity;
+
+  for (const item of items) {
+    const x = item.transform[4];
+    const y = item.transform[5];
+    const width = item.width || (item.str.length * 5);
+    const height = item.height || 12;
+
+    minX = Math.min(minX, x);
+    maxX = Math.max(maxX, x + width);
+    minY = Math.min(minY, y - height);
+    maxY = Math.max(maxY, y);
+  }
+
+  return {
+    x: minX - 5,
+    y: minY - 5,
+    width: maxX - minX + 10,
+    height: maxY - minY + 10
+  };
+}
+
+// Main function to extract keyword positions from PDF
+async function extractKeywordPositions(filePath, keywords) {
+  try {
+    const fs = require('fs');
+    const pdfjsLib = require('pdfjs-dist/legacy/build/pdf.mjs');
+
+    console.log('DEBUG: Starting keyword position extraction for', keywords.length, 'keywords');
+
+    if (!fs.existsSync(filePath)) {
+      console.log('DEBUG: File does not exist:', filePath);
+      return [];
+    }
+
+    const dataBuffer = fs.readFileSync(filePath);
+    const pdf = await pdfjsLib.getDocument({ data: dataBuffer }).promise;
+
+    console.log('DEBUG: PDF loaded with', pdf.numPages, 'pages');
+
+    const allPositions = [];
+
+    // Process each page
     for (let pageNum = 1; pageNum <= pdf.numPages; pageNum++) {
       const page = await pdf.getPage(pageNum);
       const textContent = await page.getTextContent();
       const viewport = page.getViewport({ scale: 1.0 });
+      const pageHeight = viewport.height;
 
-      for (const item of textContent.items) {
-        if (item.str && item.str.trim().length > 0) {
-          const tx = pdfjsLib.Util.transform(viewport.transform, item.transform);
-          textPositions.push({
-            text: item.str.trim(),
-            page: pageNum,
-            x: tx[4],
-            y: viewport.height - tx[5] - (item.height || 10),
-            width: item.width || item.str.length * 5,
-            height: item.height || 12,
-            // Store transform for later calculations
-            transform: item.transform
-          });
-        }
+      // Transform text items to viewport coordinates
+      const textItems = textContent.items.map(item => {
+        const tx = pdfjsLib.Util.transform(viewport.transform, item.transform);
+        return {
+          str: item.str,
+          x: tx[4],
+          y: pageHeight - tx[5],  // Flip Y to top-down
+          width: item.width,
+          height: item.height,
+          transform: item.transform
+        };
+      }).filter(item => item.str && item.str.trim().length > 0);
+
+      console.log(`DEBUG Page ${pageNum}: ${textItems.length} items`);
+
+      // Group into lines
+      const lines = groupItemsIntoLines(textItems);
+      console.log(`DEBUG Page ${pageNum}: ${lines.length} lines reconstructed`);
+
+      // Match keywords at line level
+      const matches = matchKeywordsInLines(lines, keywords);
+      console.log(`DEBUG Page ${pageNum}: ${matches.length} keyword matches`);
+
+      // Debug: show first few lines
+      if (pageNum === 1 && lines.length > 0) {
+        console.log('DEBUG: First 3 reconstructed lines:');
+        lines.slice(0, 3).forEach((line, i) => {
+          const rec = reconstructLine(line);
+          console.log(`  Line ${i}: "${rec.raw.substring(0, 40)}..." -> normalized: "${rec.normalized.substring(0, 30)}"`);
+        });
+      }
+
+      // Create position objects
+      for (const match of matches) {
+        const box = computeBoundingBox(match.line.items);
+        allPositions.push({
+          type: 'circle',
+          text: match.keyword,
+          page: pageNum,
+          x: box.x,
+          y: box.y,
+          width: box.width,
+          height: box.height
+        });
       }
     }
 
-    return textPositions;
+    // Deduplicate by keyword (keep first occurrence)
+    const seen = new Set();
+    const deduplicated = allPositions.filter(pos => {
+      const key = pos.text.toLowerCase();
+      if (seen.has(key)) return false;
+      seen.add(key);
+      return true;
+    });
+
+    console.log('DEBUG: Total positions extracted:', deduplicated.length);
+    return deduplicated;
+
   } catch (err) {
-    console.error('Text position extraction error:', err.message);
-    return null;
+    console.error('Position extraction error:', err.message);
+    console.error('Stack:', err.stack);
+    return [];
   }
-}
-
-// Match keywords to text positions
-function matchKeywordsToPositions(textPositions, keywords) {
-  const matchedPositions = [];
-
-  for (const keyword of keywords) {
-    const keywordLower = keyword.toLowerCase();
-
-    // Try exact match first
-    let match = textPositions.find(tp =>
-      tp.text.toLowerCase() === keywordLower
-    );
-
-    // Try partial match
-    if (!match) {
-      match = textPositions.find(tp =>
-        tp.text.toLowerCase().includes(keywordLower) ||
-        keywordLower.includes(tp.text.toLowerCase())
-      );
-    }
-
-    if (match) {
-      matchedPositions.push({
-        type: 'circle',
-        text: keyword,
-        page: match.page,
-        x: match.x - 5,
-        y: match.y - 5,
-        width: match.width + 10,
-        height: match.height + 10
-      });
-    }
-  }
-
-  return matchedPositions;
 }
 
 function analyzeText(text) {
