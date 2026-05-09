@@ -10,43 +10,38 @@
   ],
   "templates": {
     "1778128464875": {
-      "text": "\n\nAKSHAYA ARVETI \n+91 7569067686   |   akshayaarveti@gmail.com   |   GitHub   |   LinkedIn   |   Bengaluru, Karnataka \n \nComputer Science undergraduate with hands-on experience in AI/ML and full-stack development. Proficient in building \nend-to-end solutions spanning Flutter applications and machine learning pipelines. Adept at translating complex problems \ninto functional, scalable, and well-executed products. Driven by curiosity, a strong technical foundation, and a consistent \nability to deliver under pressure. \nEDUCATION \nB.E. – CSE (AI & ML)  —  Sai Vidya Institute of Technology, VTU    2023 – 2027 |  CGPA: 9.1 \nIntermediate – PCMB  —  Expert PU College, State Board    2021 – 2023  |  90% \nSSC  —  DVDBS Chinmaya Vidhyalaya, State Board    2009 – 2021  |  98% \nSKILLS \nLanguages: Python, C/C++, JavaScript, TypeScript, SQL \nFrameworks & Libraries: React, Next.js, Flutter, FastAPI, Flask,  Scikit-learn \nTools & Platforms: Docker, Git, GitHub, Firebase, n8n \nAI Tools: GitHub ,Copilot, Claude Code, Cursor, Windsurf \nSoft Skills: Leadership, Public Relations, Quick Learner, Team Collaborator \nPROJECTS \nNeuroRevise   HackMarch Winner (KLC Society, S Nijalingappa College)  GitHub ↗ \nAdaptive learning and revision system that uses spaced-repetition logic to help users retain knowledge. Built for HackMarch \nhackathon — won 1st place. Features a backend API, web dashboard, and Flutter mobile app. \nTech: Python, FastAPI, Flutter/Dart, JavaScript/TypeScript, n8n \nCivic Reporting System GitHub ↗ \nA Flask-based web application enabling students to submit campus civic issues with category, location, and image uploads, \nwhile admins track, assign, and resolve reports through a dedicated dashboard. \nTech: Python, Flask, SQLite, JWT, HTML/CSS/JavaScript \nPDF Reaper  GitHub ↗ \nA modern Python desktop utility for precision PDF management — extract custom page ranges and export as high-quality \nimages or new PDFs with real-time progress tracking and a responsive threaded interface.  \nTech: Python, CustomTkinter, pypdf, pdf2image, Pillow \nACHIEVEMENTS & ACTIVITIES \n• PR Head – DATA NEXUS (Dept. Club, SVIT): Leads public relations for the college's AIML department club. \n• Online tutor - Delivered personalized online tutoring sessions in Mathematics and Science, helping students strengthen \nfoundational concepts and improve academic performance. \n• HackMarch 2025 – 1st Place: Won the hackathon conducted by KLC Society at S Nijalingappa College for NeuroRevise, an \nadaptive revision system. \nCERTIFICATIONS \n• AWS Certified Machine Learning – Specialty \n• HackMarch 2025 – 1st Place Certificate (KLC Society, S Nijalingappa College) ",
+      "text": "ATS TEMPLATE\nKEYWORDS: TypeScript, Kotlin, Scala, C++, SASS/SCSS, Laravel, DynamoDB, PostgreSQL, Ansible, Azure, Google Cloud, Scikit-learn, Machine Learning, React Native, Flutter, Agile/Scrum, Project Management, Team Collaboration\nSECTIONS: experience, education, skills, certifications",
       "keywords": [
-        "javascript",
-        "typescript",
-        "python",
-        "java",
-        "react",
-        "next.js",
-        "flask",
-        "firebase",
-        "sqlite",
-        "amazonwebservices",
-        "docker",
-        "git",
-        "github",
-        "machinelearning",
-        "css",
-        "fastapi",
-        "backend",
-        "flask-based"
+        "TypeScript",
+        "PostgreSQL",
+        "Google Cloud",
+        "React Native"
       ],
-      "sections": [],
+      "sections": [
+        "experience",
+        "education",
+        "skills",
+        "certifications"
+      ],
       "config": {
         "use_keywords": true,
         "use_sections": true,
         "use_formatting": true,
+        "strictness": "high",
         "enabled_sections": [
-          "skills",
-          "projects",
-          "education",
           "experience",
-          "summary"
-        ],
-        "disabled_sections": [],
-        "strictness": "medium"
+          "education",
+          "skills",
+          "certifications"
+        ]
       },
-      "updatedAt": "2026-05-09T10:18:28.688Z"
+      "requiredSections": [
+        "experience",
+        "education",
+        "skills",
+        "certifications"
+      ],
+      "updatedAt": "2026-05-09T10:47:08.884Z"
     }
   }
 }

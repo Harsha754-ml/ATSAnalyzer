@@ -38,6 +38,17 @@ export interface AnalysisResult {
   resumeFileName?: string;
   annotations?: string[];
   scribbleAnnotations?: string[];
+  scribblePositions?: ScribblePosition[];
+}
+
+export interface ScribblePosition {
+  type: 'circle' | 'arrow' | 'strike' | 'underline';
+  text: string;
+  page: number;
+  x: number;
+  y: number;
+  width: number;
+  height: number;
 }
 
 interface StrictEngineResponse {
@@ -235,6 +246,7 @@ export async function compareResume(file: File, institutionId: string): Promise<
     };
     (result as any).annotations = data.annotations || [];
     (result as any).scribbleAnnotations = data.scribbleAnnotations || [];
+    (result as any).scribblePositions = data.scribblePositions || [];
     return result;
   }
 

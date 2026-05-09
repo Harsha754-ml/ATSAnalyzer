@@ -2,7 +2,13 @@
   "permissions": {
     "allow": [
       "Bash(npx tsc *)",
-      "Bash(Get-ChildItem -Name .gitignore -ErrorAction SilentlyContinue)"
+      "Bash(Get-ChildItem -Name .gitignore -ErrorAction SilentlyContinue)",
+      "Bash(git add *)",
+      "Bash(git commit -m ' *)",
+      "Bash(npm install *)",
+      "Bash(npm ls *)",
+      "Bash(git restore *)",
+      "Bash(git commit *)"
     ]
   }
 }

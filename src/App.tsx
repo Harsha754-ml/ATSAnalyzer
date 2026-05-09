@@ -583,6 +583,7 @@ export default function App() {
               annotations={(results as any).annotations || (results as any).scribbleAnnotations || []}
               matchedKeywords={results.matchedKeywords}
               missingKeywords={results.missingKeywords}
+              scribblePositions={(results as any).scribblePositions || []}
               onClose={() => setShowResumeViewer(false)}
             />
           )}

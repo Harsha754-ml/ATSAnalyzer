@@ -1,12 +1,22 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { Document, Page, pdfjs } from 'react-pdf';
 import { motion } from 'motion/react';
-import { ZoomIn, ZoomOut, ChevronLeft, ChevronRight, X, Eye, EyeOff } from 'lucide-react';
+import { ZoomIn, ZoomOut, ChevronLeft, ChevronRight, X, Eye, EyeOff, Check } from 'lucide-react';
 import 'react-pdf/dist/Page/AnnotationLayer.css';
 import 'react-pdf/dist/Page/TextLayer.css';
 
 // Set up PDF.js worker
 pdfjs.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.mjs`;
+
+interface ScribblePosition {
+  type: 'circle' | 'arrow' | 'strike' | 'underline';
+  text: string;
+  page: number;
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+}
 
 interface Props {
   filePath: string;
@@ -14,35 +24,45 @@ interface Props {
   annotations: string[];
   matchedKeywords: string[];
   missingKeywords: string[];
+  scribblePositions?: ScribblePosition[];
   onClose: () => void;
 }
 
-interface ScribbleAnnotation {
+interface ParsedAnnotation {
   type: 'arrow' | 'strike' | 'circle' | 'underline';
   text: string;
   color: string;
   message: string;
 }
 
-export default function ResumeViewer({ filePath, fileName, annotations, matchedKeywords, missingKeywords, onClose }: Props) {
+export default function ResumeViewer({
+  filePath,
+  fileName,
+  annotations,
+  matchedKeywords,
+  missingKeywords,
+  scribblePositions = [],
+  onClose
+}: Props) {
   const [numPages, setNumPages] = useState<number>(null);
   const [pageNumber, setPageNumber] = useState(1);
   const [scale, setScale] = useState(1.0);
   const [showAnnotations, setShowAnnotations] = useState(true);
+  const [pageSize, setPageSize] = useState({ width: 0, height: 0 });
   const containerRef = useRef<HTMLDivElement>(null);
+  const canvasRef = useRef<HTMLCanvasElement>(null);
 
-  // Generate parsed annotations from backend annotations or from missingKeywords
-  const parsedAnnotations: ScribbleAnnotation[] = React.useMemo(() => {
-    const parsed: ScribbleAnnotation[] = [];
+  // Parse text annotations for sidebar
+  const parsedAnnotations: ParsedAnnotation[] = React.useMemo(() => {
+    const parsed: ParsedAnnotation[] = [];
 
-    // Parse existing annotations from backend
     if (annotations && annotations.length > 0) {
       annotations.forEach(ann => {
         if (typeof ann !== 'string') return;
         if (ann.includes('[ARROW')) {
           const match = ann.match(/\[ARROW: add keyword: ([^\]]+)\]/);
           parsed.push({
-            type: 'arrow' as const,
+            type: 'arrow',
             text: match?.[1] || '',
             color: '#ef4444',
             message: 'Missing keyword - add this to your resume'
@@ -50,7 +70,7 @@ export default function ResumeViewer({ filePath, fileName, annotations, matchedK
         } else if (ann.includes('[STRIKE')) {
           const match = ann.match(/\[STRIKE: ([^\]]+)\]/);
           parsed.push({
-            type: 'strike' as const,
+            type: 'strike',
             text: match?.[1] || '',
             color: '#f97316',
             message: 'Weak phrasing - consider stronger wording'
@@ -58,7 +78,7 @@ export default function ResumeViewer({ filePath, fileName, annotations, matchedK
         } else if (ann.includes('[CIRCLE')) {
           const match = ann.match(/\[CIRCLE: ([^\]]+)\]/);
           parsed.push({
-            type: 'circle' as const,
+            type: 'circle',
             text: match?.[1] || '',
             color: '#8b5cf6',
             message: 'Important - review this section'
@@ -66,7 +86,7 @@ export default function ResumeViewer({ filePath, fileName, annotations, matchedK
         } else if (ann.includes('[MISSING]')) {
           const match = ann.match(/\[MISSING: ([^\]]+)\]/);
           parsed.push({
-            type: 'underline' as const,
+            type: 'underline',
             text: match?.[1] || '',
             color: '#eab308',
             message: 'Section missing from resume'
@@ -74,28 +94,20 @@ export default function ResumeViewer({ filePath, fileName, annotations, matchedK
         } else if (ann.includes('missing section')) {
           const match = ann.match(/missing section - ([^\]]+)/i);
           parsed.push({
-            type: 'underline' as const,
+            type: 'underline',
             text: match?.[1] || ann,
             color: '#eab308',
             message: 'Missing section - add this to your resume'
-          });
-        } else if (ann.includes('[NOTE')) {
-          const match = ann.match(/\[NOTE: ([^\]]+)\]/);
-          parsed.push({
-            type: 'circle' as const,
-            text: match?.[1] || ann,
-            color: '#8b5cf6',
-            message: match ? 'Formatting tip' : ann
           });
         }
       });
     }
 
-    // Also add annotations from missingKeywords directly
+    // Add from missingKeywords if no annotations
     if (missingKeywords && missingKeywords.length > 0 && parsed.length === 0) {
       missingKeywords.slice(0, 5).forEach((kw: string) => {
         parsed.push({
-          type: 'arrow' as const,
+          type: 'arrow',
           text: kw,
           color: '#ef4444',
           message: 'Missing keyword - add this to your resume'
@@ -106,9 +118,102 @@ export default function ResumeViewer({ filePath, fileName, annotations, matchedK
     return parsed;
   }, [annotations, missingKeywords]);
 
+  // Filter scribbles for current page
+  const pageScribbles = React.useMemo(() => {
+    return scribblePositions.filter(s => s.page === pageNumber);
+  }, [scribblePositions, pageNumber]);
+
+  // Draw scribbles on canvas
+  const drawScribbles = useCallback(() => {
+    const canvas = canvasRef.current;
+    if (!canvas || !showAnnotations || pageSize.width === 0) return;
+
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+
+    // Clear canvas
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    // Draw each scribble
+    pageScribbles.forEach(scribble => {
+      const x = scribble.x * scale;
+      const y = scribble.y * scale;
+      const w = scribble.width * scale;
+      const h = scribble.height * scale;
+
+      ctx.strokeStyle = '#ef4444';
+      ctx.lineWidth = 3;
+      ctx.fillStyle = 'rgba(239, 68, 68, 0.1)';
+
+      switch (scribble.type) {
+        case 'circle':
+          // Draw red circle around text
+          ctx.beginPath();
+          ctx.ellipse(x + w / 2, y + h / 2, w / 2 + 5, h / 2 + 5, 0, 0, 2 * Math.PI);
+          ctx.fill();
+          ctx.stroke();
+
+          // Draw icon
+          ctx.fillStyle = '#ef4444';
+          ctx.font = 'bold 14px sans-serif';
+          ctx.fillText('!', x + w / 2 - 5, y + h / 2 + 5);
+          break;
+
+        case 'arrow':
+          // Draw arrow pointing down
+          ctx.beginPath();
+          ctx.moveTo(x + w / 2, y - 15 * scale);
+          ctx.lineTo(x + w / 2, y + h + 5);
+          ctx.stroke();
+
+          // Arrow head
+          ctx.beginPath();
+          ctx.moveTo(x + w / 2 - 8, y);
+          ctx.lineTo(x + w / 2, y + 10);
+          ctx.lineTo(x + w / 2 + 8, y);
+          ctx.stroke();
+          break;
+
+        case 'strike':
+          // Draw strikethrough line
+          ctx.beginPath();
+          ctx.moveTo(x - 5, y + h / 2);
+          ctx.lineTo(x + w + 5, y + h / 2);
+          ctx.stroke();
+          break;
+
+        case 'underline':
+          // Draw underline
+          ctx.beginPath();
+          ctx.moveTo(x - 5, y + h + 3);
+          ctx.lineTo(x + w + 5, y + h + 3);
+          ctx.stroke();
+          break;
+      }
+    });
+  }, [pageScribbles, scale, showAnnotations, pageSize]);
+
+  // Update canvas when scale or scribbles change
+  useEffect(() => {
+    drawScribbles();
+  }, [drawScribbles]);
+
   function onDocumentLoadSuccess({ numPages }: { numPages: number }) {
     setNumPages(numPages);
   }
+
+  // Handle page render to get dimensions
+  const onPageLoadSuccess = (page: any) => {
+    const viewport = page.getViewport({ scale: 1.0 });
+    setPageSize({ width: viewport.width, height: viewport.height });
+
+    // Set canvas size
+    if (canvasRef.current) {
+      canvasRef.current.width = viewport.width;
+      canvasRef.current.height = viewport.height;
+      drawScribbles();
+    }
+  };
 
   const getAnnotationIcon = (type: string) => {
     switch (type) {
@@ -119,6 +224,11 @@ export default function ResumeViewer({ filePath, fileName, annotations, matchedK
       default: return '•';
     }
   };
+
+  const isServerFile = !filePath.startsWith('blob:');
+  const fileUrl = isServerFile
+    ? `http://localhost:5001/uploads/${filePath}`
+    : filePath;
 
   return (
     <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
@@ -157,36 +267,11 @@ export default function ResumeViewer({ filePath, fileName, annotations, matchedK
 
         {/* Content */}
         <div className="flex-1 flex overflow-hidden">
-          {/* PDF Viewer */}
-          <div ref={containerRef} className="flex-1 overflow-auto bg-slate-100 dark:bg-slate-800 p-8 flex justify-center">
-            {filePath.startsWith('blob:') ? (
+          {/* PDF Viewer with Scribbles */}
+          <div ref={containerRef} className="flex-1 overflow-auto bg-slate-100 dark:bg-slate-800 p-8 flex justify-center relative">
+            <div className="relative">
               <Document
-                file={filePath}
-                onLoadSuccess={onDocumentLoadSuccess}
-                loading={
-                  <div className="flex items-center justify-center h-96">
-                    <div className="w-10 h-10 border-4 border-blue-600 border-t-transparent rounded-full animate-spin" />
-                  </div>
-                }
-                error={
-                  <div className="flex flex-col items-center justify-center h-96 text-slate-500">
-                    <Eye className="w-16 h-16 mb-4" />
-                    <p className="font-bold">Unable to load resume</p>
-                    <p className="text-sm">The file could not be displayed</p>
-                  </div>
-                }
-              >
-                <Page
-                  pageNumber={pageNumber}
-                  scale={scale}
-                  className="shadow-2xl"
-                  renderTextLayer={true}
-                  renderAnnotationLayer={false}
-                />
-              </Document>
-            ) : (
-              <Document
-                file={`http://localhost:5001/uploads/${filePath}`}
+                file={fileUrl}
                 onLoadSuccess={onDocumentLoadSuccess}
                 loading={
                   <div className="flex flex-col items-center justify-center h-96">
@@ -198,7 +283,7 @@ export default function ResumeViewer({ filePath, fileName, annotations, matchedK
                   <div className="flex flex-col items-center justify-center h-96 text-slate-500">
                     <Eye className="w-16 h-16 mb-4" />
                     <p className="font-bold">Unable to load PDF</p>
-                    <p className="text-xs mt-2 text-red-400">URL: uploads/{filePath}</p>
+                    <p className="text-xs mt-2 text-red-400">URL: {fileUrl}</p>
                   </div>
                 }
               >
@@ -208,9 +293,20 @@ export default function ResumeViewer({ filePath, fileName, annotations, matchedK
                   className="shadow-2xl"
                   renderTextLayer={true}
                   renderAnnotationLayer={false}
+                  onLoadSuccess={onPageLoadSuccess}
                 />
               </Document>
-            )}
+
+              {/* Canvas overlay for scribbles */}
+              <canvas
+                ref={canvasRef}
+                className="absolute top-0 left-0 pointer-events-none"
+                style={{
+                  transform: `scale(${scale})`,
+                  transformOrigin: 'top left'
+                }}
+              />
+            </div>
           </div>
 
           {/* Annotations Sidebar */}
@@ -222,6 +318,11 @@ export default function ResumeViewer({ filePath, fileName, annotations, matchedK
                 <path d="M2 2l7.586 7.586" />
               </svg>
               Scribbles & Notes
+              {pageScribbles.length > 0 && (
+                <span className="ml-auto text-xs bg-red-100 text-red-600 px-2 py-0.5 rounded-full">
+                  {pageScribbles.length} on page
+                </span>
+              )}
             </h3>
 
             {parsedAnnotations.length > 0 ? (
@@ -260,10 +361,23 @@ export default function ResumeViewer({ filePath, fileName, annotations, matchedK
               </div>
             ) : (
               <div className="text-center py-8">
-                <div className="w-12 h-12 bg-slate-100 dark:bg-slate-800 rounded-full flex items-center justify-center mx-auto mb-3">
+                <div className="w-12 h-12 bg-green-100 dark:bg-green-900/30 rounded-full flex items-center justify-center mx-auto mb-3">
                   <Check className="w-6 h-6 text-green-500" />
                 </div>
                 <p className="text-sm text-slate-500 dark:text-slate-400">No issues found!</p>
+                <p className="text-xs text-slate-400 mt-1">Your resume looks good.</p>
+              </div>
+            )}
+
+            {/* Visual Scribbles Info */}
+            {pageScribbles.length > 0 && (
+              <div className="mt-6 p-3 bg-blue-50 dark:bg-blue-900/20 rounded-xl border border-blue-200 dark:border-blue-800">
+                <p className="text-xs font-bold text-blue-600 dark:text-blue-400 mb-1">
+                  Visual Scribbles: {pageScribbles.length}
+                </p>
+                <p className="text-xs text-blue-500 dark:text-blue-300">
+                  Scribbles are drawn directly on the PDF at the matching positions.
+                </p>
               </div>
             )}
 
@@ -271,7 +385,7 @@ export default function ResumeViewer({ filePath, fileName, annotations, matchedK
             <div className="mt-6 pt-6 border-t border-slate-200 dark:border-slate-700">
               <h4 className="font-bold text-sm text-slate-700 dark:text-slate-300 mb-3">Keywords</h4>
               <div className="space-y-3">
-                {missingKeywords.length > 0 && (
+                {missingKeywords && missingKeywords.length > 0 && (
                   <div>
                     <p className="text-xs text-red-500 font-bold mb-2">Missing:</p>
                     <div className="flex flex-wrap gap-1">
@@ -286,7 +400,7 @@ export default function ResumeViewer({ filePath, fileName, annotations, matchedK
                     </div>
                   </div>
                 )}
-                {matchedKeywords.length > 0 && (
+                {matchedKeywords && matchedKeywords.length > 0 && (
                   <div>
                     <p className="text-xs text-green-500 font-bold mb-2">Matched:</p>
                     <div className="flex flex-wrap gap-1">
@@ -347,18 +461,10 @@ export default function ResumeViewer({ filePath, fileName, annotations, matchedK
           </div>
 
           <div className="text-sm text-slate-500 dark:text-slate-400">
-            {parsedAnnotations.length} scribbles found
+            {parsedAnnotations.length} issues found
           </div>
         </div>
       </motion.div>
     </div>
-  );
-}
-
-function Check(props: React.SVGProps<SVGSVGElement>) {
-  return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" {...props}>
-      <polyline points="20 6 9 17 4 12" />
-    </svg>
   );
 }

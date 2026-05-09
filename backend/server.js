@@ -727,6 +727,92 @@ async function extractText(filePathOrBuffer, filename) {
   return null;
 }
 
+// Extract text positions from PDF for scribble annotations
+async function extractTextPositions(filePathOrBuffer, filename) {
+  try {
+    const fs = require('fs');
+    const pdfjsLib = require('pdfjs-dist/legacy/build/pdf.js');
+
+    let dataBuffer;
+    if (typeof filePathOrBuffer === 'string' && fs.existsSync(filePathOrBuffer)) {
+      dataBuffer = fs.readFileSync(filePathOrBuffer);
+    } else if (Buffer.isBuffer(filePathOrBuffer)) {
+      dataBuffer = filePathOrBuffer;
+    }
+
+    if (!dataBuffer) return null;
+
+    const loadingTask = pdfjsLib.getDocument({ data: dataBuffer });
+    const pdf = await loadingTask.promise;
+
+    const textPositions = [];
+
+    // Extract text from each page
+    for (let pageNum = 1; pageNum <= pdf.numPages; pageNum++) {
+      const page = await pdf.getPage(pageNum);
+      const textContent = await page.getTextContent();
+      const viewport = page.getViewport({ scale: 1.0 });
+
+      for (const item of textContent.items) {
+        if (item.str && item.str.trim().length > 0) {
+          const tx = pdfjsLib.Util.transform(viewport.transform, item.transform);
+          textPositions.push({
+            text: item.str.trim(),
+            page: pageNum,
+            x: tx[4],
+            y: viewport.height - tx[5] - (item.height || 10),
+            width: item.width || item.str.length * 5,
+            height: item.height || 12,
+            // Store transform for later calculations
+            transform: item.transform
+          });
+        }
+      }
+    }
+
+    return textPositions;
+  } catch (err) {
+    console.error('Text position extraction error:', err.message);
+    return null;
+  }
+}
+
+// Match keywords to text positions
+function matchKeywordsToPositions(textPositions, keywords) {
+  const matchedPositions = [];
+
+  for (const keyword of keywords) {
+    const keywordLower = keyword.toLowerCase();
+
+    // Try exact match first
+    let match = textPositions.find(tp =>
+      tp.text.toLowerCase() === keywordLower
+    );
+
+    // Try partial match
+    if (!match) {
+      match = textPositions.find(tp =>
+        tp.text.toLowerCase().includes(keywordLower) ||
+        keywordLower.includes(tp.text.toLowerCase())
+      );
+    }
+
+    if (match) {
+      matchedPositions.push({
+        type: 'circle',
+        text: keyword,
+        page: match.page,
+        x: match.x - 5,
+        y: match.y - 5,
+        width: match.width + 10,
+        height: match.height + 10
+      });
+    }
+  }
+
+  return matchedPositions;
+}
+
 function analyzeText(text) {
   const lower = text.toLowerCase();
   const skills = TECH_SKILLS.filter(s => lower.includes(s));
@@ -1113,6 +1199,20 @@ app.post('/compare-resume', upload.single('resume'), async (req, res) => {
   debugInfo.result = analysis;
   console.log('DEBUG compare-result:', JSON.stringify(analysis, null, 2));
 
+  // Extract text positions for visual scribbles
+  let scribblePositions = [];
+  if (req.file && req.file.path && analysis.missing_keywords && analysis.missing_keywords.length > 0) {
+    try {
+      const textPositions = await extractTextPositions(req.file.path, req.file.originalname);
+      if (textPositions && textPositions.length > 0) {
+        scribblePositions = matchKeywordsToPositions(textPositions, analysis.missing_keywords);
+        console.log('DEBUG scribble-positions:', JSON.stringify(scribblePositions, null, 2));
+      }
+    } catch (err) {
+      console.error('Scribble position error:', err.message);
+    }
+  }
+
   // Return file path for PDF rendering if available
   // Extract just the filename for the static URL
   const filePath = req.file?.path ? path.basename(req.file.path) : null;
@@ -1120,6 +1220,7 @@ app.post('/compare-resume', upload.single('resume'), async (req, res) => {
     ...analysis,
     resumeFilePath: filePath,
     resumeFileName: req.file?.originalname || null,
+    scribblePositions: scribblePositions
   };
 
   return res.json(response);
