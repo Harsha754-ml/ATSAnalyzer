@@ -125,30 +125,58 @@ export default function ResumeViewer({ filePath, fileName, annotations, matchedK
         <div className="flex-1 flex overflow-hidden">
           {/* PDF Viewer */}
           <div ref={containerRef} className="flex-1 overflow-auto bg-slate-100 dark:bg-slate-800 p-8 flex justify-center">
-            <Document
-              file={`http://localhost:5001/${filePath}`}
-              onLoadSuccess={onDocumentLoadSuccess}
-              loading={
-                <div className="flex items-center justify-center h-96">
-                  <div className="w-10 h-10 border-4 border-blue-600 border-t-transparent rounded-full animate-spin" />
-                </div>
-              }
-              error={
-                <div className="flex flex-col items-center justify-center h-96 text-slate-500">
-                  <Eye className="w-16 h-16 mb-4" />
-                  <p className="font-bold">Unable to load PDF</p>
-                  <p className="text-sm">The resume file could not be displayed</p>
-                </div>
-              }
-            >
-              <Page
-                pageNumber={pageNumber}
-                scale={scale}
-                className="shadow-2xl"
-                renderTextLayer={true}
-                renderAnnotationLayer={false}
-              />
-            </Document>
+            {filePath.startsWith('blob:') ? (
+              <Document
+                file={filePath}
+                onLoadSuccess={onDocumentLoadSuccess}
+                loading={
+                  <div className="flex items-center justify-center h-96">
+                    <div className="w-10 h-10 border-4 border-blue-600 border-t-transparent rounded-full animate-spin" />
+                  </div>
+                }
+                error={
+                  <div className="flex flex-col items-center justify-center h-96 text-slate-500">
+                    <Eye className="w-16 h-16 mb-4" />
+                    <p className="font-bold">Unable to load resume</p>
+                    <p className="text-sm">The file could not be displayed</p>
+                  </div>
+                }
+              >
+                <Page
+                  pageNumber={pageNumber}
+                  scale={scale}
+                  className="shadow-2xl"
+                  renderTextLayer={true}
+                  renderAnnotationLayer={false}
+                />
+              </Document>
+            ) : (
+              <Document
+                file={`http://localhost:5001/uploads/${filePath}`}
+                onLoadSuccess={onDocumentLoadSuccess}
+                loading={
+                  <div className="flex flex-col items-center justify-center h-96">
+                    <div className="w-10 h-10 border-4 border-blue-600 border-t-transparent rounded-full animate-spin mb-4" />
+                    <p className="text-sm text-slate-500">Loading PDF...</p>
+                  </div>
+                }
+                error={
+                  <div className="flex flex-col items-center justify-center h-96 text-slate-500">
+                    <Eye className="w-16 h-16 mb-4" />
+                    <p className="font-bold">Unable to load PDF</p>
+                    <p className="text-xs mt-2 text-red-400">URL: uploads/{filePath}</p>
+                  </div>
+                }
+              >
+                <Page
+                  pageNumber={pageNumber}
+                  scale={scale}
+                  className="shadow-2xl"
+                  renderTextLayer={true}
+                  renderAnnotationLayer={false}
+                />
+              </Document>
+            )}
           </div>
 
           {/* Annotations Sidebar */}

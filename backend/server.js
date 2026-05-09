@@ -30,8 +30,13 @@ let db = loadData();
 app.use(cors());
 app.use(express.json());
 
-// Serve uploaded files for PDF rendering
-app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+// Serve uploaded files for PDF rendering with CORS
+app.use('/uploads', (req, res, next) => {
+  res.header('Access-Control-Allow-Origin', '*');
+  res.header('Access-Control-Allow-Methods', 'GET, OPTIONS');
+  res.header('Access-Control-Allow-Headers', 'Content-Type');
+  next();
+}, express.static(path.join(__dirname, 'uploads')));
 
 // Create uploads directory
 const uploadDir = path.join(__dirname, 'uploads');
@@ -1109,9 +1114,11 @@ app.post('/compare-resume', upload.single('resume'), async (req, res) => {
   console.log('DEBUG compare-result:', JSON.stringify(analysis, null, 2));
 
   // Return file path for PDF rendering if available
+  // Extract just the filename for the static URL
+  const filePath = req.file?.path ? path.basename(req.file.path) : null;
   const response = {
     ...analysis,
-    resumeFilePath: req.file?.path || null,
+    resumeFilePath: filePath,
     resumeFileName: req.file?.originalname || null,
   };
 
