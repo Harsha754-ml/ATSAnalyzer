@@ -16,48 +16,37 @@
         "typescript",
         "python",
         "java",
-        "c++",
-        "go",
         "react",
         "next.js",
         "flask",
         "firebase",
         "sqlite",
-        "aws",
+        "amazonwebservices",
         "docker",
         "git",
         "github",
-        "machine learning",
-        "html",
+        "machinelearning",
         "css",
-        "college",
-        "flutter",
-        "hackmarch",
-        "learning",
-        "klc",
-        "society",
-        "nijalingappa",
-        "1st",
-        "tech",
-        "science",
-        "end",
-        "machine",
-        "2023",
-        "state",
-        "board",
-        "2021",
         "fastapi",
-        "tools"
+        "backend",
+        "flask-based"
       ],
-      "sections": [
-        "Contact",
-        "Skills",
-        "Experience",
-        "Projects",
-        "Education",
-        "Certifications"
-      ],
-      "updatedAt": "2026-05-07T05:29:05.702Z"
+      "sections": [],
+      "config": {
+        "use_keywords": true,
+        "use_sections": true,
+        "use_formatting": true,
+        "enabled_sections": [
+          "skills",
+          "projects",
+          "education",
+          "experience",
+          "summary"
+        ],
+        "disabled_sections": [],
+        "strictness": "medium"
+      },
+      "updatedAt": "2026-05-09T10:18:28.688Z"
     }
   }
 }

@@ -475,6 +475,7 @@ function compareResume(userText, templateText, templateConfig = {}) {
       missing: missing.length,
       section_issues: sectionIssues.length
     },
+    matched_keywords: matched,
     missing_keywords: missing,
     section_issues: sectionIssues,
     annotations
@@ -645,7 +646,7 @@ function compareResumeToTemplate(resumeText, template) {
   
   return {
     matchPercentage,
-    matchedKeywords: template.keywords.filter(k => !result.missing_keywords.includes(k)),
+    matchedKeywords: result.matched_keywords || [],
     missingKeywords: result.missing_keywords,
     missingSections,
     suggestions: buildSuggestions(missingSections, result.missing_keywords, matchPercentage),

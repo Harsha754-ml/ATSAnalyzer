@@ -43,6 +43,7 @@ interface StrictEngineResponse {
     missing: number;
     section_issues: number;
   };
+  matched_keywords: string[];
   missing_keywords: string[];
   section_issues: string[];
   annotations: string[];
@@ -159,11 +160,11 @@ export async function compareResume(file: File, institutionId: string): Promise<
 
   if (data?.metrics && Array.isArray(data?.missing_keywords)) {
     const strict = data as StrictEngineResponse;
-    const totalKeywords = Number(strict.metrics.total_keywords || 0);
-    const matched = Number(strict.metrics.matched || 0);
+    const totalKeywords = Number(strict.metrics?.total_keywords || 0);
+    const matched = Number(strict.metrics?.matched || 0);
     const matchPercentage = totalKeywords > 0 ? Math.round((matched / totalKeywords) * 100) : 0;
     const missingSections = (strict.section_issues || [])
-      .map((issue) => {
+      .map((issue: string) => {
         const match = issue.match(/missing section - ([^\]]+)/i);
         return match?.[1] || '';
       })
@@ -171,7 +172,7 @@ export async function compareResume(file: File, institutionId: string): Promise<
 
     const result: AnalysisResult = {
       matchPercentage,
-      matchedKeywords: [],
+      matchedKeywords: strict.matched_keywords || [],
       missingKeywords: strict.missing_keywords || [],
       missingSections,
       suggestions: [
@@ -194,8 +195,11 @@ export async function compareResume(file: File, institutionId: string): Promise<
         keywordCount: totalKeywords,
         sections: [],
       },
+      resumeText: (data as any).resumeText,
+      resumeSections: (data as any).resumeSections,
     };
     (result as any).annotations = strict.annotations || [];
+    (result as any).scribbleAnnotations = (data as any).scribbleAnnotations || [];
     return result;
   }
 
