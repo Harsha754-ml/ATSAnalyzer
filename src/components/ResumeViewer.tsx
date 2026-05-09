@@ -31,46 +31,80 @@ export default function ResumeViewer({ filePath, fileName, annotations, matchedK
   const [showAnnotations, setShowAnnotations] = useState(true);
   const containerRef = useRef<HTMLDivElement>(null);
 
-  const parsedAnnotations: ScribbleAnnotation[] = annotations.map(ann => {
-    if (typeof ann !== 'string') return null;
-    if (ann.includes('[ARROW')) {
-      const match = ann.match(/\[ARROW: add keyword: ([^\]]+)\]/);
-      return {
-        type: 'arrow' as const,
-        text: match?.[1] || '',
-        color: '#ef4444',
-        message: 'Missing keyword - add this to your resume'
-      };
+  // Generate parsed annotations from backend annotations or from missingKeywords
+  const parsedAnnotations: ScribbleAnnotation[] = React.useMemo(() => {
+    const parsed: ScribbleAnnotation[] = [];
+
+    // Parse existing annotations from backend
+    if (annotations && annotations.length > 0) {
+      annotations.forEach(ann => {
+        if (typeof ann !== 'string') return;
+        if (ann.includes('[ARROW')) {
+          const match = ann.match(/\[ARROW: add keyword: ([^\]]+)\]/);
+          parsed.push({
+            type: 'arrow' as const,
+            text: match?.[1] || '',
+            color: '#ef4444',
+            message: 'Missing keyword - add this to your resume'
+          });
+        } else if (ann.includes('[STRIKE')) {
+          const match = ann.match(/\[STRIKE: ([^\]]+)\]/);
+          parsed.push({
+            type: 'strike' as const,
+            text: match?.[1] || '',
+            color: '#f97316',
+            message: 'Weak phrasing - consider stronger wording'
+          });
+        } else if (ann.includes('[CIRCLE')) {
+          const match = ann.match(/\[CIRCLE: ([^\]]+)\]/);
+          parsed.push({
+            type: 'circle' as const,
+            text: match?.[1] || '',
+            color: '#8b5cf6',
+            message: 'Important - review this section'
+          });
+        } else if (ann.includes('[MISSING]')) {
+          const match = ann.match(/\[MISSING: ([^\]]+)\]/);
+          parsed.push({
+            type: 'underline' as const,
+            text: match?.[1] || '',
+            color: '#eab308',
+            message: 'Section missing from resume'
+          });
+        } else if (ann.includes('missing section')) {
+          const match = ann.match(/missing section - ([^\]]+)/i);
+          parsed.push({
+            type: 'underline' as const,
+            text: match?.[1] || ann,
+            color: '#eab308',
+            message: 'Missing section - add this to your resume'
+          });
+        } else if (ann.includes('[NOTE')) {
+          const match = ann.match(/\[NOTE: ([^\]]+)\]/);
+          parsed.push({
+            type: 'circle' as const,
+            text: match?.[1] || ann,
+            color: '#8b5cf6',
+            message: match ? 'Formatting tip' : ann
+          });
+        }
+      });
     }
-    if (ann.includes('[STRIKE')) {
-      const match = ann.match(/\[STRIKE: ([^\]]+)\]/);
-      return {
-        type: 'strike' as const,
-        text: match?.[1] || '',
-        color: '#f97316',
-        message: 'Weak phrasing - consider stronger wording'
-      };
+
+    // Also add annotations from missingKeywords directly
+    if (missingKeywords && missingKeywords.length > 0 && parsed.length === 0) {
+      missingKeywords.slice(0, 5).forEach((kw: string) => {
+        parsed.push({
+          type: 'arrow' as const,
+          text: kw,
+          color: '#ef4444',
+          message: 'Missing keyword - add this to your resume'
+        });
+      });
     }
-    if (ann.includes('[CIRCLE')) {
-      const match = ann.match(/\[CIRCLE: ([^\]]+)\]/);
-      return {
-        type: 'circle' as const,
-        text: match?.[1] || '',
-        color: '#8b5cf6',
-        message: 'Important - review this section'
-      };
-    }
-    if (ann.includes('[MISSING]')) {
-      const match = ann.match(/\[MISSING: ([^\]]+)\]/);
-      return {
-        type: 'underline' as const,
-        text: match?.[1] || '',
-        color: '#eab308',
-        message: 'Section missing from resume'
-      };
-    }
-    return null;
-  }).filter(Boolean);
+
+    return parsed;
+  }, [annotations, missingKeywords]);
 
   function onDocumentLoadSuccess({ numPages }: { numPages: number }) {
     setNumPages(numPages);
