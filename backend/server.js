@@ -962,6 +962,56 @@ app.post('/institutions/template', authenticateToken, upload.single('template'),
   });
 });
 
+app.post('/institutions/template/generate', authenticateToken, async (req, res) => {
+  try {
+    const { keywords, sections, config } = req.body;
+
+    if (!keywords || !Array.isArray(keywords) || keywords.length < 3) {
+      return res.status(400).json({ error: 'At least 3 keywords are required.' });
+    }
+
+    if (!sections || !Array.isArray(sections) || sections.length < 2) {
+      return res.status(400).json({ error: 'At least 2 sections are required.' });
+    }
+
+    const templateConfig = {
+      use_keywords: true,
+      use_sections: true,
+      use_formatting: config?.use_formatting ?? true,
+      strictness: config?.strictness || 'medium',
+      enabled_sections: sections,
+    };
+
+    // Build template text from selected keywords
+    const templateText = `ATS TEMPLATE\nKEYWORDS: ${keywords.join(', ')}\nSECTIONS: ${sections.join(', ')}`;
+
+    const template = buildTemplate(templateText, templateConfig);
+
+    db.templates[req.user.id] = {
+      text: templateText,
+      keywords: keywords,
+      sections: sections,
+      config: templateConfig,
+      requiredSections: sections,
+      updatedAt: new Date().toISOString(),
+    };
+    saveData(db);
+
+    res.json({
+      status: 'ok',
+      template: {
+        keywordCount: keywords.length,
+        keywords: keywords,
+        sections: sections,
+        updatedAt: db.templates[req.user.id].updatedAt,
+      },
+    });
+  } catch (err) {
+    console.error('Template generation error:', err);
+    return res.status(500).json({ error: 'Failed to generate template.' });
+  }
+});
+
 app.delete('/institutions/template', authenticateToken, (req, res) => {
   if (db.templates[req.user.id]) {
     delete db.templates[req.user.id];

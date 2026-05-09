@@ -130,6 +130,38 @@ export async function uploadAtsTemplate(file: File): Promise<TemplateStatus> {
   return data.template as TemplateStatus;
 }
 
+export async function generateTemplate(data: {
+  keywords: string[];
+  sections: string[];
+  config: {
+    use_keywords: boolean;
+    use_sections: boolean;
+    use_formatting: boolean;
+    strictness: 'low' | 'medium' | 'high';
+  };
+}): Promise<TemplateStatus> {
+  const token = getToken();
+  if (!token) {
+    throw new Error('Please login first to generate a template.');
+  }
+
+  const res = await fetch(`${API_BASE_URL}/institutions/template/generate`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`,
+    },
+    body: JSON.stringify(data),
+  });
+
+  const response = await parseJsonResponse(res);
+  if (!res.ok) {
+    throw new Error(response?.error || 'Failed to generate template.');
+  }
+
+  return response.template as TemplateStatus;
+}
+
 export async function getMyTemplate(): Promise<TemplateStatus | null> {
   const token = getToken();
   if (!token) return null;

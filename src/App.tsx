@@ -1,12 +1,12 @@
 ﻿import React, { useState, useRef, useEffect } from 'react';
-import { motion, useMotionValue, useTransform, useSpring } from 'motion/react';
+import { motion, AnimatePresence, useMotionValue, useTransform, useSpring } from 'motion/react';
 import {
   Upload, Sparkles, AlertCircle, CheckCircle2,
   ArrowRight, Zap, FileText, Cpu, Globe,
   Moon, Sun, X, Lock, Building2, Mail, KeyRound,
 } from 'lucide-react';
-import { 
-  compareResume, uploadAtsTemplate, AnalysisResult, TemplateStatus,
+import {
+  compareResume, uploadAtsTemplate, generateTemplate, AnalysisResult, TemplateStatus,
   login, register, logout, getCurrentUser, getInstitutions, Institution,
   getMyTemplate
 } from './services/geminiService';
@@ -25,6 +25,7 @@ import {
 } from './components/AnimationLayer';
 
 import AnalysisView from './components/AnalysisView';
+import TemplateGenerator from './components/TemplateGenerator';
 
 // â”€â”€â”€ Unsplash image sources (free, no API key) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 const IMAGES = {
@@ -454,6 +455,7 @@ export default function App() {
   const [isTemplateDragging, setIsTemplateDragging] = useState(false);
   const [isResumeDragging, setIsResumeDragging] = useState(false);
   const [showAuthModal, setShowAuthModal] = useState(false);
+  const [showTemplateGenerator, setShowTemplateGenerator] = useState(false);
   const [currentUser, setCurrentUser] = useState<AuthUser | null>(getCurrentUser());
   const [institutions, setInstitutions] = useState<Institution[]>([]);
   const [selectedInstitution, setSelectedInstitution] = useState('');
@@ -506,6 +508,30 @@ export default function App() {
     } catch (err) {
       console.error('Template upload error:', err);
       setTemplateError(err instanceof Error ? err.message : 'Failed to upload template. Please try again.');
+    } finally {
+      setTemplateUploading(false);
+    }
+  };
+
+  const handleTemplateGenerated = async (data: {
+    keywords: string[];
+    sections: string[];
+    config: {
+      use_keywords: boolean;
+      use_sections: boolean;
+      use_formatting: boolean;
+      strictness: 'low' | 'medium' | 'high';
+    };
+  }) => {
+    setShowTemplateGenerator(false);
+    setTemplateUploading(true);
+    setTemplateError(null);
+    try {
+      const template = await generateTemplate(data);
+      setTemplateStatus(template);
+    } catch (err) {
+      console.error('Template generation error:', err);
+      setTemplateError(err instanceof Error ? err.message : 'Failed to generate template.');
     } finally {
       setTemplateUploading(false);
     }
@@ -753,12 +779,22 @@ export default function App() {
                     <p className="text-sm text-slate-400 dark:text-slate-500 mb-2">
                       Upload your company's ATS template
                     </p>
-                    <button
-                      onClick={() => templateInputRef.current?.click()}
-                      className="btn-secondary text-sm px-4 py-2"
-                    >
-                      Choose File
-                    </button>
+                    <div className="flex items-center gap-3">
+                      <button
+                        onClick={() => templateInputRef.current?.click()}
+                        className="btn-secondary text-sm px-4 py-2"
+                      >
+                        Choose File
+                      </button>
+                      <span className="text-sm text-slate-400">or</span>
+                      <button
+                        onClick={() => setShowTemplateGenerator(true)}
+                        className="text-sm font-bold text-blue-600 hover:text-blue-700 flex items-center gap-1"
+                      >
+                        Generate Template
+                        <Sparkles className="w-4 h-4" />
+                      </button>
+                    </div>
                     <input
                       type="file"
                       className="hidden"
@@ -916,11 +952,20 @@ export default function App() {
         </div>
       </footer>
 
-      <AuthModal 
-        isOpen={showAuthModal} 
-        onClose={() => setShowAuthModal(false)} 
+      <AuthModal
+        isOpen={showAuthModal}
+        onClose={() => setShowAuthModal(false)}
         onAuthSuccess={handleAuthSuccess}
       />
+
+      <AnimatePresence>
+        {showTemplateGenerator && (
+          <TemplateGenerator
+            onGenerated={handleTemplateGenerated}
+            onCancel={() => setShowTemplateGenerator(false)}
+          />
+        )}
+      </AnimatePresence>
     </div>
   );
 }
