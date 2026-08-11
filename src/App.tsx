@@ -594,259 +594,349 @@ export default function App() {
 
   // â”€â”€ Home View â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   return (
-    <div className="min-h-screen bg-white dark:bg-[#0d1117] transition-colors duration-300">      <ScrollProgressBar />
+    <div className="min-h-screen bg-white dark:bg-[#0d1117] transition-colors duration-300">
+      <ScrollProgressBar />
       <ThreeBackground />
-      <Header 
-          currentUser={currentUser}
-          onLogout={handleLogout}
-          onLoginClick={() => setShowAuthModal(true)}
-        />
+      <Header
+        currentUser={currentUser}
+        onLogout={handleLogout}
+        onLoginClick={() => setShowAuthModal(true)}
+      />
 
       <main>
-        {/* Hero */}
-        <section id="hero" className="section-padding pt-48 text-center max-w-5xl mx-auto space-y-10">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="space-y-8"
-          >
-            <h1 className="text-6xl md:text-8xl font-black tracking-tight text-slate-900 dark:text-white leading-[1.05]">
-              <FlipWords text="Compare Your Resume" /><br />
-              <span className="text-gradient">
-                <FlipWords text="With ATS Template" />
-              </span>
-            </h1>
-            <p className="text-xl md:text-2xl text-slate-500 dark:text-slate-400 max-w-3xl mx-auto font-light leading-relaxed">
-              Upload the ATS ideal template, then compare student resumes to see match percentage, missing skills, and improvement tips.
-            </p>
-            <div className="flex flex-col sm:flex-row gap-5 justify-center pt-6">
-              <MagneticButton>
+        <section id="hero" className="px-6 md:px-10 pt-36 pb-20">
+          <div className="max-w-7xl mx-auto grid lg:grid-cols-2 gap-12 items-center">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="space-y-8"
+            >
+              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 text-xs font-bold uppercase tracking-[0.2em]">
+                <Sparkles className="w-3.5 h-3.5" />
+                ATS Resume Intelligence
+              </div>
+              <h1 className="text-5xl md:text-7xl font-black leading-[1.05] text-slate-900 dark:text-white">
+                Make every resume
+                <span className="block text-gradient">application-ready</span>
+              </h1>
+              <p className="text-lg md:text-xl text-slate-600 dark:text-slate-300 leading-relaxed max-w-2xl">
+                Compare resumes against institution templates, uncover missing keywords, and get fixes that actually improve ATS match scores.
+              </p>
+              <div className="flex flex-wrap gap-4">
                 <button
                   onClick={() => document.getElementById('upload-section')?.scrollIntoView({ behavior: 'smooth' })}
-                  className="btn-primary px-10 h-16 text-lg"
+                  className="btn-primary"
                 >
-                  Check ATS Match <ArrowRight className="w-5 h-5" />
+                  Start Comparison <ArrowRight className="w-5 h-5" />
                 </button>
-              </MagneticButton>
-              <MagneticButton>
-                <button className="btn-secondary px-10 h-16 text-lg">
-                  View Sample Report
+                <button
+                  onClick={() => document.getElementById('how-it-works')?.scrollIntoView({ behavior: 'smooth' })}
+                  className="btn-secondary"
+                >
+                  How it Works
                 </button>
-              </MagneticButton>
-            </div>
-          </motion.div>
+              </div>
+            </motion.div>
 
-          {/* Floating image grid */}
-          <HeroImageGrid />
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.1 }}
+              className="saas-card p-8 md:p-10 bg-gradient-to-br from-slate-50 to-white dark:from-slate-900 dark:to-slate-950"
+            >
+              <div className="grid sm:grid-cols-2 gap-4 mb-8">
+                <div className="rounded-2xl p-5 bg-blue-50 dark:bg-blue-900/20 border border-blue-100 dark:border-blue-800">
+                  <p className="text-xs uppercase tracking-[0.2em] text-blue-700 dark:text-blue-300 font-bold mb-2">Average Match Lift</p>
+                  <p className="text-3xl font-black text-slate-900 dark:text-white">+34%</p>
+                </div>
+                <div className="rounded-2xl p-5 bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-100 dark:border-emerald-800">
+                  <p className="text-xs uppercase tracking-[0.2em] text-emerald-700 dark:text-emerald-300 font-bold mb-2">Instant Feedback</p>
+                  <p className="text-3xl font-black text-slate-900 dark:text-white">~2s</p>
+                </div>
+              </div>
+              <div className="space-y-3">
+                {[
+                  'Template-based resume comparison',
+                  'Keyword and section gap detection',
+                  'Actionable ATS optimization report',
+                ].map((item) => (
+                  <div key={item} className="flex items-center gap-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-white/70 dark:bg-slate-800/60 p-3">
+                    <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0" />
+                    <span className="text-sm text-slate-700 dark:text-slate-200">{item}</span>
+                  </div>
+                ))}
+              </div>
+            </motion.div>
+          </div>
 
-          {/* Social proof */}
-          <SocialProof />
-        </section>
-
-        {/* Features */}
-        <section id="features" className="section-padding max-w-7xl mx-auto">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="text-center mb-16 space-y-3"
-          >
-            <h2 className="text-4xl font-bold text-slate-900 dark:text-white tracking-tight">Everything you need</h2>
-            <p className="text-slate-500 dark:text-slate-400 text-lg font-light">Built for engineers, designers, and every professional in between.</p>
-          </motion.div>
-          <div className="grid md:grid-cols-3 gap-8">
-            <Reveal delay={0.1}>
-              <FeatureCard
-                icon={Zap}
-                title="ATS Template Matching"
-                desc="Compare resumes against the admin ATS template and get an instant match score."
-              />
-            </Reveal>
-            <Reveal delay={0.2}>
-              <FeatureCard
-                icon={Sparkles}
-                title="Keyword Gap Finder"
-                desc="Highlight missing skills and keywords recruiters actually scan for."
-              />
-            </Reveal>
-            <Reveal delay={0.3}>
-              <FeatureCard
-                icon={CheckCircle2}
-                title="Actionable Suggestions"
-                desc="Get clear steps to improve ATS compatibility and raise your score."
-              />
-            </Reveal>
+          <div className="max-w-7xl mx-auto mt-12 grid md:grid-cols-3 gap-4">
+            {[
+              { label: 'Institutions onboarded', value: `${institutions.length}+` },
+              { label: 'Templates active', value: `${institutions.filter(i => i.hasTemplate).length}+` },
+              { label: 'Resumes improved', value: '10k+' },
+            ].map((stat) => (
+              <div key={stat.label} className="saas-card p-5 text-center">
+                <div className="text-3xl font-black text-slate-900 dark:text-white">{stat.value}</div>
+                <div className="text-sm text-slate-500 dark:text-slate-400 mt-1">{stat.label}</div>
+              </div>
+            ))}
           </div>
         </section>
 
-        {/* How it works */}
-        <section id="how-it-works" className="py-24 md:py-32 px-8 max-w-6xl mx-auto space-y-28">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="text-center space-y-3"
-          >
-            <h2 className="text-4xl font-bold text-slate-900 dark:text-white tracking-tight">How it works</h2>
-            <p className="text-slate-500 dark:text-slate-400 text-lg font-light">Three steps from ATS template to match report.</p>
-          </motion.div>
-
-            <StepCard
-              step="Step 01"
-              icon={FileText}
-              title="Admin uploads ATS template"
-              desc="Upload the ideal ATS-friendly resume format that defines structure and required keywords."
-              img={IMAGES.resume}
-            />
-            <StepCard
-              step="Step 02"
-              icon={Cpu}
-              title="Student uploads resume"
-              desc="Students submit their resume to compare against the ATS template and keywords."
-              img={IMAGES.collab}
-              reverse
-            />
-            <StepCard
-              step="Step 03"
-              icon={Globe}
-              title="Get the ATS report"
-              desc="Receive match percentage, missing skills, and tailored suggestions to improve ATS compatibility."
-              img={IMAGES.coding}
-            />
-        </section>
-
-        {/* Wall of fame â€” engineer photos */}
-        <section className="py-20 px-8 bg-slate-50 dark:bg-slate-900/50 overflow-hidden">
+        <section id="features" className="px-6 md:px-10 py-20">
           <div className="max-w-7xl mx-auto">
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              className="text-center mb-14 space-y-3"
-            >
-              <h2 className="text-4xl font-bold text-slate-900 dark:text-white tracking-tight">Wall of Fame</h2>
-              <p className="text-slate-500 dark:text-slate-400 text-lg font-light">Students who improved their ATS match scores.</p>
-            </motion.div>
-
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-5">
+            <div className="text-center mb-12 space-y-3">
+              <h2 className="text-4xl md:text-5xl font-bold text-slate-900 dark:text-white tracking-tight">A better landing for ATS scoring</h2>
+              <p className="text-slate-500 dark:text-slate-400 text-lg">Everything users need in one clean, modern experience.</p>
+            </div>
+            <div className="grid md:grid-cols-2 xl:grid-cols-4 gap-6">
               {[
-                { img: IMAGES.engineer1, name: 'Priya S.',  role: 'ML Engineer',   company: 'Google' },
-                { img: IMAGES.engineer2, name: 'James K.',  role: 'Backend Dev',   company: 'Stripe' },
-                { img: IMAGES.engineer3, name: 'Sofia M.',  role: 'UX Designer',   company: 'Figma' },
-                { img: IMAGES.engineer4, name: 'Arjun R.',  role: 'DevOps',        company: 'AWS' },
-                { img: IMAGES.engineer5, name: 'Emma L.',   role: 'Frontend Dev',  company: 'Vercel' },
-                { img: IMAGES.engineer6, name: 'Carlos T.', role: 'Full Stack',    company: 'Shopify' },
-              ].map((person, i) => (
-                <motion.div
-                  key={i}
-                  initial={{ opacity: 0, scale: 0.8, y: 20 }}
-                  whileInView={{ opacity: 1, scale: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: i * 0.06, duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
-                  whileHover={{ y: -6, scale: 1.03 }}
-                  className="bg-white dark:bg-slate-800 rounded-2xl p-5 text-center border border-slate-100 dark:border-slate-700 shadow-sm hover:shadow-md transition-shadow group"
-                >
-                  <div className="relative mx-auto w-16 h-16 mb-4">
-                    <img
-                      src={person.img}
-                      alt={person.name}
-                      className="w-16 h-16 rounded-full object-cover border-2 border-slate-100 group-hover:border-blue-200 transition-all"
-                    />
-                    <div className="absolute -bottom-1 -right-1 w-5 h-5 bg-green-400 rounded-full border-2 border-white" />
+                { icon: Zap, title: 'Fast Analysis', desc: 'Get ATS reports in seconds, not minutes.' },
+                { icon: FileText, title: 'Template Driven', desc: 'Use institution-specific benchmark templates.' },
+                { icon: Cpu, title: 'Smart Matching', desc: 'Detect keyword and section-level gaps clearly.' },
+                { icon: Globe, title: 'Scale Ready', desc: 'Support multiple institutions and cohorts.' },
+              ].map(({ icon: Icon, title, desc }) => (
+                <div key={title} className="saas-card p-6 space-y-4">
+                  <div className="w-12 h-12 rounded-2xl bg-blue-50 dark:bg-blue-900/30 text-blue-600 flex items-center justify-center">
+                    <Icon className="w-6 h-6" />
                   </div>
-                  <div className="font-bold text-sm text-slate-900 dark:text-white">{person.name}</div>
-                  <div className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">{person.role}</div>
-                  <div className="mt-2 text-xs font-bold text-blue-600 bg-blue-50 dark:bg-blue-900/30 rounded-full px-3 py-1 inline-block">
-                    {person.company}
-                  </div>
-                </motion.div>
+                  <h3 className="text-xl font-bold text-slate-900 dark:text-white">{title}</h3>
+                  <p className="text-sm text-slate-500 dark:text-slate-400 leading-relaxed">{desc}</p>
+                </div>
               ))}
             </div>
           </div>
         </section>
 
-        {/* Upload */}
-        <section id="upload-section" className="section-padding">
-          <div className="max-w-3xl mx-auto w-full">
-            <Reveal className="text-center mb-12 space-y-4">
-              <h2 className="text-4xl font-bold tracking-tight text-slate-900 dark:text-white">Compare Your Resume</h2>
-              <p className="text-lg text-slate-500 dark:text-slate-400 font-light">
-                Select the company you're applying to, then upload your resume to get an ATS match report.
-              </p>
-            </Reveal>
-
-            {currentUser && !templateStatus && (
-              <div
-                className={`
-                  saas-card min-h-[160px] flex flex-col items-center justify-center p-6 text-center border-2 border-dashed mb-4
-                  ${isTemplateDragging ? 'border-blue-500 bg-blue-50 scale-[1.02]' : 'border-slate-200 hover:border-blue-400'}
-                  ${templateUploading ? 'pointer-events-none opacity-50' : ''}
-                `}
-                onDragOver={(e) => { e.preventDefault(); setIsTemplateDragging(true); }}
-                onDragLeave={() => setIsTemplateDragging(false)}
-                onDrop={(e) => {
-                  e.preventDefault();
-                  setIsTemplateDragging(false);
-                  const file = e.dataTransfer.files[0];
-                  if (file) handleTemplateUpload(file);
-                }}
-              >
-                {templateUploading ? (
-                  <div className="space-y-4">
-                    <div className="relative w-10 h-10 mx-auto">
-                      <div className="absolute inset-0 border-4 border-slate-100 rounded-full" />
-                      <div className="absolute inset-0 border-4 border-blue-600 rounded-full border-t-transparent animate-spin" />
-                    </div>
-                    <p className="text-sm font-bold text-blue-600 uppercase tracking-[0.2em] animate-pulse">
-                      Processing Template...
-                    </p>
+        <section id="how-it-works" className="px-6 md:px-10 py-20 bg-slate-50 dark:bg-slate-900/40">
+          <div className="max-w-7xl mx-auto">
+            <div className="text-center mb-12">
+              <h2 className="text-4xl md:text-5xl font-bold text-slate-900 dark:text-white">How the flow works</h2>
+              <p className="mt-3 text-slate-500 dark:text-slate-400">Simple process, structured results.</p>
+            </div>
+            <div className="grid md:grid-cols-3 gap-6">
+              {[
+                {
+                  icon: FileText,
+                  step: '01',
+                  title: 'Upload ATS Template',
+                  desc: 'Admins define the ideal format and skill expectations once.',
+                },
+                {
+                  icon: Upload,
+                  step: '02',
+                  title: 'Submit Resume',
+                  desc: 'Students upload resumes against the selected institution template.',
+                },
+                {
+                  icon: CheckCircle2,
+                  step: '03',
+                  title: 'Review Report',
+                  desc: 'Get score, missing keywords, section misses, and clear improvements.',
+                },
+              ].map(({ icon: Icon, step, title, desc }) => (
+                <div key={title} className="saas-card p-8 relative overflow-hidden">
+                  <span className="absolute top-5 right-5 text-5xl font-black text-slate-100 dark:text-slate-800">{step}</span>
+                  <div className="w-12 h-12 rounded-2xl bg-blue-50 dark:bg-blue-900/30 text-blue-600 flex items-center justify-center mb-5">
+                    <Icon className="w-6 h-6" />
                   </div>
-                ) : (
-                  <>
-                    <Upload className="w-7 h-7 text-blue-600 mb-2" />
-                    <h3 className="text-base font-bold mb-1 text-slate-900 dark:text-white">
-                      Upload Your ATS Template
-                    </h3>
-                    <p className="text-sm text-slate-400 dark:text-slate-500 mb-2">
-                      Upload your company's ATS template
-                    </p>
-                    <div className="flex items-center gap-3">
-                      <button
-                        onClick={() => templateInputRef.current?.click()}
-                        className="btn-secondary text-sm px-4 py-2"
-                      >
-                        Choose File
-                      </button>
-                      <span className="text-sm text-slate-400">or</span>
-                      <button
-                        onClick={() => setShowTemplateGenerator(true)}
-                        className="text-sm font-bold text-blue-600 hover:text-blue-700 flex items-center gap-1"
-                      >
-                        Generate Template
-                        <Sparkles className="w-4 h-4" />
-                      </button>
-                    </div>
-                    <input
-                      type="file"
-                      className="hidden"
-                      ref={templateInputRef}
-                      onChange={(e) => e.target.files?.[0] && handleTemplateUpload(e.target.files[0])}
-                    />
-                  </>
-                )}
-              </div>
-            )}
+                  <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-2">{title}</h3>
+                  <p className="text-sm text-slate-500 dark:text-slate-400 leading-relaxed">{desc}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
 
-            {templateStatus && (
-              <motion.div
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="mb-4 p-3 bg-green-50 border border-green-100 rounded-xl flex items-center gap-2 text-green-700 text-sm font-medium"
-              >
-                <CheckCircle2 className="w-4 h-4 shrink-0" />
-                Template loaded ({templateStatus.keywordCount} keywords)
-              </motion.div>
-            )}
+        <section className="px-6 md:px-10 py-20">
+          <div className="max-w-7xl mx-auto grid lg:grid-cols-2 gap-10 items-start">
+            <div className="space-y-5">
+              <h2 className="text-4xl md:text-5xl font-bold text-slate-900 dark:text-white">Built for real placement teams</h2>
+              <p className="text-slate-500 dark:text-slate-400 leading-relaxed">
+                Reworked landing blocks keep the focus on outcomes: higher match rates, fewer resume misses, and faster candidate readiness.
+              </p>
+              <div className="space-y-3">
+                {[
+                  'Institution-specific scoring and guidance',
+                  'Cleaner upload and compare workflow',
+                  'Designed for student and admin use in one app',
+                ].map((item) => (
+                  <div key={item} className="flex items-center gap-3 rounded-xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 p-3">
+                    <CheckCircle2 className="w-4 h-4 text-blue-600 shrink-0" />
+                    <span className="text-sm text-slate-700 dark:text-slate-200">{item}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+            <div className="grid sm:grid-cols-2 gap-4">
+              {[
+                { title: 'Template Control', value: '100%', note: 'Institution-managed standards' },
+                { title: 'Resume Insights', value: 'Detailed', note: 'Keyword + section diagnostics' },
+                { title: 'Turnaround Time', value: 'Seconds', note: 'Fast feedback loop' },
+                { title: 'Experience', value: 'Modern', note: 'New landing page UI' },
+              ].map((card) => (
+                <div key={card.title} className="saas-card p-6">
+                  <p className="text-xs uppercase tracking-[0.2em] text-slate-500 dark:text-slate-400 font-bold">{card.title}</p>
+                  <p className="text-3xl font-black text-slate-900 dark:text-white mt-2">{card.value}</p>
+                  <p className="text-sm text-slate-500 dark:text-slate-400 mt-2">{card.note}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        <section id="upload-section" className="px-6 md:px-10 py-24">
+          <div className="max-w-7xl mx-auto">
+            <div className="text-center mb-12">
+              <h2 className="text-4xl md:text-5xl font-bold tracking-tight text-slate-900 dark:text-white">Upload and compare now</h2>
+              <p className="text-lg text-slate-500 dark:text-slate-400 mt-3">
+                New landing page, same ATS workflow.
+              </p>
+            </div>
+
+            <div className="grid lg:grid-cols-2 gap-6 mb-6">
+              <div className="saas-card p-7">
+                <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-2">Template Management</h3>
+                <p className="text-sm text-slate-500 dark:text-slate-400 mb-5">
+                  Upload or generate ATS template for your institution.
+                </p>
+                {currentUser ? (
+                  !templateStatus ? (
+                    <div
+                      className={`
+                        min-h-[180px] border-2 border-dashed rounded-2xl flex flex-col items-center justify-center text-center p-5
+                        ${isTemplateDragging ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20' : 'border-slate-200 dark:border-slate-700'}
+                        ${templateUploading ? 'pointer-events-none opacity-60' : ''}
+                      `}
+                      onDragOver={(e) => { e.preventDefault(); setIsTemplateDragging(true); }}
+                      onDragLeave={() => setIsTemplateDragging(false)}
+                      onDrop={(e) => {
+                        e.preventDefault();
+                        setIsTemplateDragging(false);
+                        const file = e.dataTransfer.files[0];
+                        if (file) handleTemplateUpload(file);
+                      }}
+                    >
+                      {templateUploading ? (
+                        <div className="space-y-4">
+                          <div className="relative w-10 h-10 mx-auto">
+                            <div className="absolute inset-0 border-4 border-slate-100 rounded-full" />
+                            <div className="absolute inset-0 border-4 border-blue-600 rounded-full border-t-transparent animate-spin" />
+                          </div>
+                          <p className="text-xs font-bold text-blue-600 uppercase tracking-[0.2em] animate-pulse">
+                            Processing Template...
+                          </p>
+                        </div>
+                      ) : (
+                        <>
+                          <Upload className="w-8 h-8 text-blue-600 mb-3" />
+                          <p className="text-sm font-semibold text-slate-800 dark:text-slate-100 mb-3">
+                            Drop template file or choose manually
+                          </p>
+                          <div className="flex items-center gap-3 flex-wrap justify-center">
+                            <button
+                              onClick={() => templateInputRef.current?.click()}
+                              className="btn-secondary !px-4 !py-2 text-sm"
+                            >
+                              Choose File
+                            </button>
+                            <button
+                              onClick={() => setShowTemplateGenerator(true)}
+                              className="text-sm font-semibold text-blue-600 hover:text-blue-700 flex items-center gap-1"
+                            >
+                              Generate Template <Sparkles className="w-4 h-4" />
+                            </button>
+                          </div>
+                        </>
+                      )}
+                    </div>
+                  ) : (
+                    <div className="rounded-2xl border border-green-200 dark:border-green-800 bg-green-50 dark:bg-green-900/20 p-4 flex items-center gap-3 text-green-700 dark:text-green-300">
+                      <CheckCircle2 className="w-5 h-5 shrink-0" />
+                      <div>
+                        <p className="font-semibold text-sm">Template loaded successfully</p>
+                        <p className="text-xs">Detected {templateStatus.keywordCount} keywords</p>
+                      </div>
+                    </div>
+                  )
+                ) : (
+                  <div className="rounded-2xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 p-5">
+                    <p className="text-sm text-slate-600 dark:text-slate-300 mb-3">Log in to manage institution ATS templates.</p>
+                    <button onClick={() => setShowAuthModal(true)} className="btn-primary !px-5 !py-2.5 text-sm">
+                      Login / Register
+                    </button>
+                  </div>
+                )}
+                <input
+                  type="file"
+                  className="hidden"
+                  ref={templateInputRef}
+                  onChange={(e) => e.target.files?.[0] && handleTemplateUpload(e.target.files[0])}
+                />
+              </div>
+
+              <div className="saas-card p-7">
+                <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-2">Resume Comparison</h3>
+                <p className="text-sm text-slate-500 dark:text-slate-400 mb-5">
+                  Select institution and upload student resume to generate ATS report.
+                </p>
+                <div
+                  className={`
+                    min-h-[260px] border-2 border-dashed rounded-2xl flex flex-col items-center justify-center text-center p-6
+                    ${isResumeDragging ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20' : 'border-slate-200 dark:border-slate-700'}
+                    ${analyzing ? 'pointer-events-none opacity-60' : ''}
+                  `}
+                  onDragOver={(e) => { e.preventDefault(); setIsResumeDragging(true); }}
+                  onDragLeave={() => setIsResumeDragging(false)}
+                  onDrop={(e) => {
+                    e.preventDefault();
+                    setIsResumeDragging(false);
+                    const file = e.dataTransfer.files[0];
+                    if (file) handleResumeUpload(file);
+                  }}
+                >
+                  {analyzing ? (
+                    <div className="space-y-5">
+                      <div className="relative w-14 h-14 mx-auto">
+                        <div className="absolute inset-0 border-4 border-slate-100 rounded-full" />
+                        <div className="absolute inset-0 border-4 border-blue-600 rounded-full border-t-transparent animate-spin" />
+                      </div>
+                      <p className="text-xs font-bold text-blue-600 uppercase tracking-[0.2em] animate-pulse">
+                        Comparing Resume...
+                      </p>
+                    </div>
+                  ) : (
+                    <div className="w-full">
+                      <Upload className="w-8 h-8 text-blue-600 mx-auto mb-4" />
+                      <select
+                        value={selectedInstitution}
+                        onChange={(e) => setSelectedInstitution(e.target.value)}
+                        className="w-full mb-4 px-4 py-3 rounded-xl border-2 border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:border-blue-500 focus:ring-0 outline-none transition-colors cursor-pointer appearance-none"
+                        style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%236b7280'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E")`, backgroundRepeat: 'no-repeat', backgroundPosition: 'right 12px center', backgroundSize: '20px' }}
+                      >
+                        <option value="" disabled>Select Institution...</option>
+                        {institutions.filter(i => i.hasTemplate).map(inst => (
+                          <option key={inst.id} value={inst.id}>{inst.name}</option>
+                        ))}
+                      </select>
+                      <button
+                        onClick={() => resumeInputRef.current?.click()}
+                        disabled={!selectedInstitution}
+                        className="btn-primary w-full disabled:opacity-50 disabled:cursor-not-allowed"
+                      >
+                        Compare Resume
+                      </button>
+                      <input
+                        type="file"
+                        className="hidden"
+                        ref={resumeInputRef}
+                        onChange={(e) => e.target.files?.[0] && handleResumeUpload(e.target.files[0])}
+                      />
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
 
             {templateError && (
               <motion.div
@@ -859,127 +949,44 @@ export default function App() {
               </motion.div>
             )}
 
-            <div
-              className={`
-                saas-card min-h-[360px] flex flex-col items-center justify-center p-10 text-center border-2 border-dashed
-                ${isResumeDragging ? 'border-blue-500 bg-blue-50 scale-[1.02]' : 'border-slate-200 hover:border-blue-400'}
-                ${analyzing ? 'pointer-events-none opacity-50' : ''}
-              `}
-              onDragOver={(e) => { e.preventDefault(); setIsResumeDragging(true); }}
-              onDragLeave={() => setIsResumeDragging(false)}
-              onDrop={(e) => {
-                e.preventDefault();
-                setIsResumeDragging(false);
-                const file = e.dataTransfer.files[0];
-                if (file) handleResumeUpload(file);
-              }}
-            >
-              {analyzing ? (
-                <div className="space-y-8">
-                  <div className="relative w-20 h-20 mx-auto">
-                    <div className="absolute inset-0 border-4 border-slate-100 rounded-full" />
-                    <div className="absolute inset-0 border-4 border-blue-600 rounded-full border-t-transparent animate-spin" />
-                  </div>
-                  <p className="text-sm font-bold text-blue-600 uppercase tracking-[0.3em] animate-pulse">
-                    Comparing Resume...
-                  </p>
-                </div>
-              ) : (
-                <>
-                  <div className="w-20 h-20 bg-blue-50 rounded-3xl flex items-center justify-center text-blue-600 mb-6">
-                    <Upload className="w-10 h-10" />
-                  </div>
-                  <h3 className="text-xl font-bold mb-2 tracking-tight text-slate-900 dark:text-white uppercase">
-                    Upload Your Resume
-                  </h3>
-                  <p className="text-slate-400 dark:text-slate-500 mb-4 font-light">
-                    Select the company/institution you're applying to, then upload your resume.
-                  </p>
-                  <select
-                    value={selectedInstitution}
-                    onChange={(e) => setSelectedInstitution(e.target.value)}
-                    className="w-full mb-4 px-4 py-3 rounded-xl border-2 border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:border-blue-500 focus:ring-0 outline-none transition-colors cursor-pointer appearance-none"
-                    style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%236b7280'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E")`, backgroundRepeat: 'no-repeat', backgroundPosition: 'right 12px center', backgroundSize: '20px' }}
-                  >
-                    <option value="" disabled>Select Institution...</option>
-                    {institutions.filter(i => i.hasTemplate).map(inst => (
-                      <option key={inst.id} value={inst.id}>{inst.name}</option>
-                    ))}
-                  </select>
-                  <button
-                    onClick={() => resumeInputRef.current?.click()}
-                    disabled={!selectedInstitution}
-                    className="btn-primary w-full disabled:opacity-50 disabled:cursor-not-allowed"
-                  >
-                    Compare Resume
-                  </button>
-                  <input
-                    type="file"
-                    className="hidden"
-                    ref={resumeInputRef}
-                    onChange={(e) => e.target.files?.[0] && handleResumeUpload(e.target.files[0])}
-                  />
-                </>
-              )}
-            </div>
-
             {resumeError && (
               <motion.div
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="mt-4 p-5 bg-red-50 border border-red-100 rounded-2xl flex items-center gap-4 text-red-600 text-sm font-medium"
+                className="p-4 bg-red-50 border border-red-100 rounded-xl flex items-center gap-3 text-red-600 text-sm font-medium"
               >
-                <AlertCircle className="w-5 h-5 shrink-0" />
+                <AlertCircle className="w-4 h-4 shrink-0" />
                 {resumeError}
               </motion.div>
             )}
           </div>
         </section>
 
-        {/* CTA */}
-        <section className="section-padding">
-          <div className="max-w-4xl mx-auto text-center space-y-10">
-            <Reveal>
-              <h2 className="text-5xl md:text-7xl font-bold tracking-tight leading-[1.1] text-slate-900 dark:text-white">
-                Build ATS-ready <br /> resumes with confidence.
-              </h2>
-            </Reveal>
-            <Reveal delay={0.15}>
-              <p className="text-slate-500 dark:text-slate-400 text-xl font-light max-w-2xl mx-auto leading-relaxed">
-                Join students who are improving their ATS scores with clear keyword gaps and structure fixes.
+        <section className="px-6 md:px-10 pb-20">
+          <div className="max-w-7xl mx-auto rounded-3xl bg-slate-900 dark:bg-slate-800 text-white p-10 md:p-14 flex flex-col lg:flex-row gap-8 lg:items-center lg:justify-between">
+            <div>
+              <h2 className="text-3xl md:text-5xl font-bold leading-tight">Ready to benchmark every resume?</h2>
+              <p className="mt-3 text-slate-300 max-w-2xl">
+                Launch comparison now and generate a complete ATS report in one flow.
               </p>
-            </Reveal>
-            <Reveal delay={0.25}>
-              <MagneticButton className="mx-auto">
-                <button
-                  onClick={() => document.getElementById('upload-section')?.scrollIntoView({ behavior: 'smooth' })}
-                  className="btn-primary px-16 text-xl h-16"
-                >
-                  Start ATS Comparison
-                </button>
-              </MagneticButton>
-            </Reveal>
-            <p className="text-slate-400 text-xs font-bold uppercase tracking-[0.4em]">
-              No credit card required - Get feedback fast
-            </p>
+            </div>
+            <button
+              onClick={() => document.getElementById('upload-section')?.scrollIntoView({ behavior: 'smooth' })}
+              className="px-8 py-4 bg-white text-slate-900 font-bold rounded-2xl hover:bg-slate-100 transition-all w-fit"
+            >
+              Start ATS Comparison
+            </button>
           </div>
         </section>
       </main>
 
-      <footer className="py-16 px-8 max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-8 border-t border-slate-100 dark:border-slate-800">
-        <div className="flex items-center gap-2">
-          <div className="w-6 h-6 rounded bg-blue-600 flex items-center justify-center font-bold text-white text-[10px]">
-            AI
+      <footer className="px-6 md:px-10 pb-10">
+        <div className="max-w-7xl mx-auto pt-8 border-t border-slate-200 dark:border-slate-800 flex flex-col md:flex-row items-center justify-between gap-4 text-sm">
+          <div className="flex items-center gap-2 font-bold text-slate-900 dark:text-white">
+            <div className="w-7 h-7 rounded-lg bg-blue-600 text-white flex items-center justify-center text-xs">AI</div>
+            ATS Comparator
           </div>
-          <span className="font-bold tracking-tight text-slate-900 dark:text-white uppercase text-sm tracking-widest">ATS Comparator</span>
-        </div>
-        <div className="flex gap-10 text-[10px] font-semibold text-slate-400 uppercase tracking-widest">
-          <a href="#" className="hover:text-blue-600 transition-colors">Terms</a>
-          <a href="#" className="hover:text-blue-600 transition-colors">Privacy</a>
-          <a href="#" className="hover:text-blue-600 transition-colors">Help</a>
-        </div>
-        <div className="text-slate-400 text-[10px] font-medium tracking-[0.2em] font-mono">
-          (c) 2026 ATS RESUME COMPARATOR
+          <div className="text-slate-500 dark:text-slate-400">Modern landing redesign • 2026</div>
         </div>
       </footer>
 
