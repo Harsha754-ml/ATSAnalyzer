@@ -1322,11 +1322,8 @@ app.post('/compare-resume', upload.single('resume'), async (req, res) => {
   let scribblePositions = [];
   if (req.file && req.file.path && analysis.missing_keywords && analysis.missing_keywords.length > 0) {
     try {
-      const textPositions = await extractTextPositions(req.file.path, req.file.originalname);
-      if (textPositions && textPositions.length > 0) {
-        scribblePositions = matchKeywordsToPositions(textPositions, analysis.missing_keywords);
-        console.log('DEBUG scribble-positions:', JSON.stringify(scribblePositions, null, 2));
-      }
+      scribblePositions = await extractKeywordPositions(req.file.path, analysis.missing_keywords);
+      console.log('DEBUG scribble-positions:', JSON.stringify(scribblePositions, null, 2));
     } catch (err) {
       console.error('Scribble position error:', err.message);
     }
